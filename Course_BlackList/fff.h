@@ -1,6 +1,6 @@
-#pragma once
+ï»¿#pragma once
 #include <iostream>
 void foo()
 {
-	std::cout << "ïîøåë íà õóé";
+	std::cout << "Ð¿Ð¾ÑˆÐµÐ» Ð½Ð° Ñ…ÑƒÐ¹";
 }

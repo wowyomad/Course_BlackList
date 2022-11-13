@@ -1,46 +1,42 @@
+#include "Setup.hpp"
+#include "RNG.hpp"
+
 #include <iostream>
-#include <string>
-
-#include "common.h"
-#include "Money.hpp"
-
-#include <Windows.h>
-
 #include <conio.h>
 
-void gotoxy(COORD pos)
-{
-	HANDLE output = GetStdHandle(STD_OUTPUT_HANDLE);
-	SetConsoleCursorPosition(output, pos);
-}
-
-COORD getxy()
-{
-	COORD pos;
-	HANDLE output = GetStdHandle(STD_OUTPUT_HANDLE);
-	CONSOLE_SCREEN_BUFFER_INFO cbsi;
-	if (GetConsoleScreenBufferInfo(output, &cbsi))
-	{
-		return cbsi.dwCursorPosition;
-	}
-	else
-	{
-		throw std::exception("–ù–µ –ø–æ–ª—É—á–∏–ª–æ—Å—å –ø–æ—Ä–∞–±–æ—Ç–∞—Ç—å —Å –∫—É—Ä—Å–æ—Ä–æ–º");
-	}
-}
-
-enum class SIGN
-{
-	positive = '\0',
-	negative = '-'
-};
+#include <fcntl.h>
+#include <io.h>
 
 
 int main()
 {
-	gotoxy({ 5, 5 });
-	std::cout << "Hello World\n";
-	gotoxy({ 0, 0 });
-	std::cout << "No, u!\n";
-	gotoxy({ 10,10 });
+	/*SetConsoleCP(65001);
+	SetConsoleOutputCP(65001);
+	system("chcp 65001");
+	setlocale(LC_ALL, "ru_RU.utf8");
+	std::ios::sync_with_stdio(false);
+	std::wcout.imbue(std::locale("ru_RU.utf8"));
+	std::wcin.imbue(std::locale("ru_RU.utf8"));*/
+
+	//std::cout.imbue(std::locale("ru_RU.utf8"));
+	//std::cin.imbue(std::locale("ru_RU.utf8"));
+	
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
+	/*SetConsoleOutputCP(65001);*/
+
+	std::string aboba = "—ÛÍ‡ ·Îˇ‰ÒÍˇ";
+	std::string test;
+	std::cout << _getch() << _getch();
+	std::cin >> test;
+	std::cout << aboba << '\t' << test << '\n';/*
+	if (aboba == test)
+	{
+		std::wcout << "¬ÂÌÓ";
+	}
+	else
+	{
+		std::cout << "ÕÂ‚ÂÌÓ";
+	}*/
 }
+

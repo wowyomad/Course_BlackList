@@ -26,3 +26,16 @@ namespace common
 		invalid_separtor() : exception(msg_invalid_separtor) { };
 	};
 }
+
+const char TAB = 9;
+const char ENTER = 13;
+const char BACKSPACE = 8;
+
+const char KEY_ARROW = 224;
+const char KEY_ARROW_UP = 72;
+const char KEY_ARROW_DOWN = 80;
+const char KEY_ARROW_LEFT = 75;
+const char KEY_ARROW_RIGHT = 77;
+
+const char UNDERSCORE_BEGIN[] = "\033[4m";
+const char UNDERSCORE_END[] = "\033[0m";

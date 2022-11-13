@@ -36,6 +36,9 @@
     <ClInclude Include="include\UserConsoleInput.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="fff.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="include\main.cpp">

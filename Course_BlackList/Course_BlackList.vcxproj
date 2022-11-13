@@ -129,6 +129,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="fff.h" />
     <ClInclude Include="include\Account.h" />
     <ClInclude Include="include\common.h" />
     <ClInclude Include="include\console_manip.h" />

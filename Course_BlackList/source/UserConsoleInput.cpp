@@ -2,14 +2,14 @@
 
 #include <conio.h>
 
-bool is_russian(const wchar_t ch)
+bool is_russian(const char ch)
 {
-	return ch >= u'а' and ch <= u'я' or ch >= u'А' and ch <= u'Я';
+	return ch >= 'а' and ch <= 'я' or ch >= 'А' and ch <= 'Я';
 }
 
-bool is_english(const wchar_t ch)
+bool is_english(const char ch)
 {
-	return ch >= u'a' and ch <= u'z' or ch >= u'A' and ch <= u'Z';
+	return ch >= 'a' and ch <= 'z' or ch >= 'A' and ch <= 'Z';
 }
 
 std::string InputPassword(unsigned min, unsigned max)
@@ -20,7 +20,7 @@ std::string InputPassword(unsigned min, unsigned max)
 
 	std::string password;
 
-	wchar_t ch = 0;
+	char ch = 0;
 
 	bool failed = true;
 
@@ -32,7 +32,7 @@ std::string InputPassword(unsigned min, unsigned max)
 			failed = false;
 		}
 
-		ch = _getwch();
+		ch = _getch();
 		if (ch == ENTER)
 		{
 			if (password.length() < min or password.length() > max)
@@ -72,7 +72,7 @@ std::string InputLogin(unsigned min, unsigned max)
 {
 	std::string login;
 	std::cout << "Логин может содеражать символы английского алфавита, цифры и нижнее подчервкивание.\n";
-	wchar_t ch = 0;
+	char ch = 0;
 	bool failed = true;
 	do
 	{

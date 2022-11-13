@@ -1,6 +1,8 @@
-#include "../include/UserConsoleInput.h"
+﻿#include "../include/UserConsoleInput.h"
+#include "../include/Date.h"
 
 #include <conio.h>
+#include <regex>
 
 bool is_russian(const char ch)
 {
@@ -37,7 +39,7 @@ std::string InputPassword(unsigned min, unsigned max)
 		{
 			if (password.length() < min or password.length() > max)
 			{
-				std::cout << "Ошибка. Минимальная длина " << min << " , максимальная " << max << ".\n";
+				std::cout << "\nОшибка. Минимальная длина " << min << " , максимальная " << max << ".\n";
 				password.clear();
 				failed = true;
 			}
@@ -187,6 +189,55 @@ tm InputDate(char* msg)
 
 	InputVar(date.tm_mday, minDay, maxDay, "Число: ");
 	return date;
+}
+
+tm InputDate()
+{
+	const char regex_pattern[] = "\\b\\d{2}(.)\\d{2}(.)\\d{4}\\b";
+	const char date_pattern[] = "%d.%m.%Y";
+
+	const size_t length = 6;
+	short index[8] = { 0, 1, 3, 4, 6, 7, 8, 9 };
+	short y = 0;
+	tm tm;
+	std::string date = "__.__.____";
+
+	while (true)
+	{
+		date[0] = date[1] = date[3] = date[4] = date[6] = date[7] = date[8] = date[9] = '_';
+		unsigned i = 0;
+		while (true)
+		{
+			std::cout << COORD{ 0, y } << date << COORD{ index[i], y };
+			char ch[2]{ _getch(), '\0' };
+			if (std::regex_match(ch, std::regex("[0-9]")))
+			{
+				if (i < 8)
+				{
+					std::cout << *ch;
+					date[index[i]] = *ch;
+					i++;
+				}
+			}
+			else if (*ch == '\b')
+			{
+				if (i > 0)
+				{
+					date[index[i - 1]] = '_';
+					i--;
+				}
+			}
+			else
+			{
+				if (std::regex_match(date, std::regex(regex_pattern)))
+					break;
+			}
+		}
+		if (str_to_tm_leaps(date.c_str(), date_pattern, &tm))
+		{
+			return tm;
+		}
+	}
 }
 
 tm InputTime(char* msg)

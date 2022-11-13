@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <string>
 #include <iostream>
@@ -13,6 +13,7 @@ std::string InputPassword(unsigned min, unsigned max);
 std::string InputLogin(unsigned min, unsigned max);
 std::string InputString(unsigned min, unsigned max, char* msg);
 tm InputDate(char* msg);
+tm InputDate();
 tm InputTime(char* msg);
 std::string DateString(tm& date);
 std::string TimeSTring(tm& time);

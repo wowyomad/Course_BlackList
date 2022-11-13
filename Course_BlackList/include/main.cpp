@@ -1,17 +1,17 @@
 ﻿#include "Setup.hpp"
 #include "RNG.hpp"
-
-#include <iostream>
-#include <conio.h>
 #include "UserConsoleInput.h"
-#include "../fff.h"
+
+#include "console_manip.h"
+
 
 int main()
 {
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
-	foo();
-	std::cout << "Вывод: " << InputPassword(8, 16);
-	
+
+	tm tm = InputDate();
+	std::cout << '\n';
+	std::cout << std::put_time(&tm, "%d.%m.%Y");
 }
 

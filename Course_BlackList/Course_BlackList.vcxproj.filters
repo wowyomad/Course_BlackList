@@ -36,7 +36,10 @@
     <ClInclude Include="include\UserConsoleInput.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="fff.h">
+    <ClInclude Include="include\Date.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\BankClient.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -48,6 +51,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\UserConsoleInput.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Date.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Account.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\BankClient.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

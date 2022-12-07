@@ -1,4 +1,4 @@
-#include "../include/console_manip.h"
+#include "console_manip.h"
 
 Console::Console()
 {
@@ -9,7 +9,7 @@ Console::Console()
 void Console::Update()
 {
 	CONSOLE_SCREEN_BUFFER_INFO csbi;
-	
+
 	GetConsoleScreenBufferInfo(handle, &csbi);
 
 	size_x = csbi.srWindow.Right - csbi.srWindow.Left + 1;
@@ -37,7 +37,7 @@ COORD Console::CoursorPosition()
 {
 	CONSOLE_SCREEN_BUFFER_INFO csbi;
 	GetConsoleScreenBufferInfo(handle, &csbi);
-	
+
 	return csbi.dwCursorPosition;
 }
 
@@ -68,7 +68,7 @@ void Console::cMove(short off_x, short off_y)
 {
 	COORD coord = CoursorPosition();
 	coord.X += off_x;
-	coord.Y = off_y;
+	coord.Y += off_y;
 	SetConsoleCursorPosition(handle, coord);
 }
 
@@ -112,4 +112,41 @@ std::ostream& operator<<(std::ostream& os, COORD&& coord)
 {
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), { coord.X, coord.Y });
 	return os;
+}
+
+std::ostream& operator<<(std::ostream& os, manip::pos& pos)
+{
+	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), { pos.x, pos.y });
+	return os;
+}
+
+std::ostream& operator<<(std::ostream& os, manip::pos&& pos)
+{
+	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), { pos.x, pos.y });
+	return os;
+}
+
+
+
+
+
+namespace manip
+{
+	pos::pos(short x, short y) : x(x), y(y) {}
+	pos::pos(COORD pos) : x(pos.X), y(pos.Y) {}
+
+
+	std::string underscore(std::string& str)
+	{
+		return manip::begin_underscore + str + manip::end_underscore;
+	}
+	std::string underscore(std::string&& str)
+	{
+		return manip::begin_underscore + str + manip::end_underscore;
+	}
+	std::string underscore(const char* str)
+	{
+		return manip::begin_underscore + std::string(str) + manip::end_underscore;
+	}
+	
 }

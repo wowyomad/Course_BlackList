@@ -5,6 +5,7 @@
 #include <conio.h>
 
 #include "common.h"
+#include "console_manip.h"
 
 bool is_russian(const char ch);
 bool is_english(const char ch);
@@ -13,7 +14,7 @@ std::string InputPassword(unsigned min, unsigned max);
 std::string InputLogin(unsigned min, unsigned max);
 std::string InputString(unsigned min, unsigned max, char* msg);
 tm InputDate(char* msg);
-tm InputDate();
+tm InputDate(manip::pos begin = manip::pos(0,0));
 tm InputTime(char* msg);
 std::string DateString(tm& date);
 std::string TimeSTring(tm& time);

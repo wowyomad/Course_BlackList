@@ -1,5 +1,5 @@
-﻿#include "../include/UserConsoleInput.h"
-#include "../include/Date.h"
+﻿#include "UserConsoleInput.h"
+#include "Date.h"
 
 #include <conio.h>
 #include <regex>
@@ -35,7 +35,7 @@ std::string InputPassword(unsigned min, unsigned max)
 		}
 
 		ch = _getch();
-		if (ch == ENTER)
+		if (ch == CONSTANT::ENTER)
 		{
 			if (password.length() < min or password.length() > max)
 			{
@@ -46,7 +46,7 @@ std::string InputPassword(unsigned min, unsigned max)
 			else break;
 
 		}
-		else if (ch == BACKSPACE)
+		else if (ch == CONSTANT::BACKSPACE)
 		{
 			if (password.length() > 0)
 			{
@@ -84,7 +84,7 @@ std::string InputLogin(unsigned min, unsigned max)
 			failed = false;
 		}
 		ch = _getch();
-		if (ch == ENTER)
+		if (ch == CONSTANT::ENTER)
 		{
 			if (login.length() == 0)
 				continue;
@@ -191,24 +191,24 @@ tm InputDate(char* msg)
 	return date;
 }
 
-tm InputDate()
+tm InputDate(manip::pos begin)
 {
 	const char regex_pattern[] = "\\b\\d{2}(.)\\d{2}(.)\\d{4}\\b";
 	const char date_pattern[] = "%d.%m.%Y";
 
 	const size_t length = 6;
 	short index[8] = { 0, 1, 3, 4, 6, 7, 8, 9 };
-	short y = 0;
-	tm tm;
-	std::string date = "__.__.____";
+	short y = begin.y;
+	short x = begin.x;
 
 	while (true)
 	{
-		date[0] = date[1] = date[3] = date[4] = date[6] = date[7] = date[8] = date[9] = '_';
+		std::string date = "__.__.____";
 		unsigned i = 0;
+		tm tm;
 		while (true)
 		{
-			std::cout << COORD{ 0, y } << date << COORD{ index[i], y };
+			std::cout << manip::pos(x, y) << date << manip::pos(x + index[i], y);
 			char ch[2]{ _getch(), '\0' };
 			if (std::regex_match(ch, std::regex("[0-9]")))
 			{
@@ -235,6 +235,7 @@ tm InputDate()
 		}
 		if (str_to_tm_leaps(date.c_str(), date_pattern, &tm))
 		{
+			std::cout << '\n';
 			return tm;
 		}
 	}

@@ -1,15 +1,30 @@
 #pragma once
 #include <Windows.h>
-#include <direct.h>
 #include <iostream>
+#include <filesystem>
 
 #include "RNG.hpp"
 #include "console_manip.h"
 
+#include <assert.h>
 void Setup()
 {
-	_mkdir("Files");
+	using namespace std::filesystem;
+
 	ShowWindow(GetConsoleWindow(), SW_MAXIMIZE);
-	Console console;
+
+	const char FILES_PATH[] = "Files";
+
+	if (!exists(FILES_PATH))
+	{
+		if (!create_directories(FILES_PATH))
+		{
+			assert(("Нет доступа к чтению/записи."));
+		}
+	}
+	std::filesystem::current_path(FILES_PATH);
+
+	std::cout << current_path() << '\n';
+
 
 }

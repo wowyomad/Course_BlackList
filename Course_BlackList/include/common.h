@@ -26,16 +26,31 @@ namespace common
 		invalid_separtor() : exception(msg_invalid_separtor) { };
 	};
 }
+namespace CONSTANT
+{
+	const char TAB = 9;
+	const char ENTER = 13;
+	const char BACKSPACE = 8;
+	const char ESCAPE = 27;
 
-const char TAB = 9;
-const char ENTER = 13;
-const char BACKSPACE = 8;
+	extern int CONSOLE_WIDTH;
+	extern int CELLS_MAX;
+	extern int CELL_WIDTH;
+	extern int ROW_WIDTH;
+	extern int BOX_WIDTH;
 
-const char KEY_ARROW = 224;
-const char KEY_ARROW_UP = 72;
-const char KEY_ARROW_DOWN = 80;
-const char KEY_ARROW_LEFT = 75;
-const char KEY_ARROW_RIGHT = 77;
+	const char KEY_ARROW = 224;
+	const char KEY_ARROW_UP = 72;
+	const char KEY_ARROW_DOWN = 80;
+	const char KEY_ARROW_LEFT = 75;
+	const char KEY_ARROW_RIGHT = 77;
 
-const char UNDERSCORE_BEGIN[] = "\033[4m";
-const char UNDERSCORE_END[] = "\033[0m";
+	const unsigned short LOGIN_LEN_MAX = 16;
+	const unsigned short LOGIN_LEN_MIN = 3;
+	const unsigned short PASSWORD_LEN_MAX = 16;
+	const unsigned short PASSWORD_LEN_MIN = 3;
+
+	const char PATH_ACCOUNTS[] = "Accounts.bin";
+	const char PATH_BANK_DATA[] = "BankData.bin";
+	const char PATH_CLIENTS[] = "ClientsData.bin";
+}

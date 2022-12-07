@@ -42,6 +42,12 @@
     <ClInclude Include="include\BankClient.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\FileHandle.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PrintFormat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="include\main.cpp">
@@ -60,6 +66,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\BankClient.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PrintFormat.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

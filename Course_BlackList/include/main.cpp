@@ -38,7 +38,7 @@ void ClearScreen(COORD home = {0, 0})
 
 void demo_main()
 {
-	COORD home{ 0, 15 };
+	COORD home{ 0, 7 };
 	manip::pos initial_pos(home);
 	std::cout << initial_pos;
 	/*for (size_t i = 0; i < 14; i++)
@@ -90,6 +90,7 @@ void demo_main()
 
 				std::cout << vec[i].InfoRow(i + 1);
 		}
+		std::cout << manip::pos(home);
 
 		char ch = _getch();
 		bool active = true;
@@ -138,7 +139,6 @@ void demo_main()
 
 				}
 			}
-
 		}
 		else if (ch == CONSTANT::ENTER)
 		{
@@ -191,7 +191,7 @@ int main()
 
 	Setup();
 	CONSTANT::CONSOLE_WIDTH = Console().WindowSize().X;
-	CONSTANT::ROW_WIDTH = CONSTANT::CONSOLE_WIDTH * 0.9;
+	CONSTANT::ROW_WIDTH = CONSTANT::CONSOLE_WIDTH * 0.8;
 	CONSTANT::BOX_WIDTH = CONSTANT::CONSOLE_WIDTH * 0.5;
 
 	demo_main();

@@ -19,7 +19,7 @@ std::string ConsoleFormat::RowString(const std::vector<std::string>& stringVecto
 	if (row_width < 3) row_width = CONSTANT::ROW_WIDTH;
 
 	unsigned rows = stringVector.size();
-	int cellWidth = row_width / rows;
+	int cellWidth = row_width / rows + (row_width / rows) % 2;
 	cellWidth = cellWidth > 2 ? cellWidth : 3;
 
 	unsigned maxLength = [stringVector]()->unsigned
@@ -128,7 +128,7 @@ std::string ConsoleFormat::RowString_highlight(const std::vector<std::string>& s
 	if (row_width < 3) row_width = CONSTANT::ROW_WIDTH;
 
 	unsigned rows = stringVector.size();
-	int cellWidth = row_width / rows;
+	int cellWidth = row_width / rows + (row_width / rows) % 2;
 	cellWidth = cellWidth > 2 ? cellWidth : 3;
 
 	unsigned maxLength = [stringVector]()->unsigned

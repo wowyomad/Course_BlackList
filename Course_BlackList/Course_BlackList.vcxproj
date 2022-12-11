@@ -95,12 +95,15 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>B:\Dev\Course_BlackList\Course_BlackList\include;$(IncludePath)</IncludePath>
+    <ExternalIncludePath>C:\Users\sundu\source\repos\wowyomad\Course_BlackList\Course_BlackList\include;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>B:\Dev\Course_BlackList\Course_BlackList\include;$(IncludePath)</IncludePath>
+    <ExternalIncludePath>C:\Users\sundu\source\repos\wowyomad\Course_BlackList\Course_BlackList\include;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_2|x64'">
     <IncludePath>B:\Dev\Course_BlackList\Course_BlackList\include;$(IncludePath)</IncludePath>
+    <ExternalIncludePath>C:\Users\sundu\source\repos\wowyomad\Course_BlackList\Course_BlackList\include;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

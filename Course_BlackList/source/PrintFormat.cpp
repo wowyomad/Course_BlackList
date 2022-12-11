@@ -39,6 +39,7 @@ std::string ConsoleFormat::RowString(const std::vector<std::string>& stringVecto
 	unsigned lines = maxLength % (cellWidth - 2) == 0 ? 0 : 1;
 	lines += maxLength / (cellWidth - 2);
 	unsigned line_length = cellWidth - 2;
+	unsigned half_line_length = line_length / 2;
 
 	char downBorder = BORDER::BOTTOM & borders ? '_' : ' ';
 	char leftBorder = BORDER::LEFT & borders ? '|' : ' ';
@@ -77,23 +78,22 @@ std::string ConsoleFormat::RowString(const std::vector<std::string>& stringVecto
 		for (int m = 0; m < rows; m++)
 
 		{
-			if (stringVector[m][index[m]] == ' ') index[m]++;
-			int j = 0;
+			unsigned first_char_i = index[m];
 
-			if (borders & BORDER::UNDERSCORE)
-				row_stream << manip::begin_underscore;
+			unsigned len = (index[m] + line_length) < stringVector[m].length() ? line_length : stringVector[m].length() - first_char_i;
 
-			while (j < line_length && index[m] < stringVector[m].length())
-			{
-				row_stream << stringVector[m][index[m]];
-				index[m]++;
-				j++;
-			}
+			std::string string_part = stringVector[m].substr(first_char_i);
+			string_part = string_part.substr(0, len);
+
+			row_stream << std::setw(half_line_length) << string_part.substr(0, string_part.length() / 2)
+				<< string_part.substr(string_part.length() / 2)
+				<< std::setw(half_line_length - (string_part.length() - string_part.length() / 2)) << "";
+
+			index[m] = first_char_i + len;
 
 			if (borders & BORDER::UNDERSCORE)
 				row_stream << manip::end_underscore;
 
-			row_stream << std::setw(line_length - j + 1) << std::setfill(' ');
 			if (m == rows - 1)
 				row_stream << rightBorder;
 			else
@@ -148,6 +148,7 @@ std::string ConsoleFormat::RowString_highlight(const std::vector<std::string>& s
 	unsigned lines = maxLength % (cellWidth - 2) == 0 ? 0 : 1;
 	lines += maxLength / (cellWidth - 2);
 	unsigned line_length = cellWidth - 2;
+	unsigned half_line_length = line_length / 2;
 
 	char downBorder = BORDER::BOTTOM & borders ? '_' : ' ';
 	char leftBorder = BORDER::LEFT & borders ? '|' : ' ';
@@ -173,7 +174,7 @@ std::string ConsoleFormat::RowString_highlight(const std::vector<std::string>& s
 	row_stream << leftBorder << std::setw(cellWidth - 1) << std::setfill(' ');
 	for (int i = 1; i < rows - 1; i++)
 	{
-		row_stream <<innerSideBorder << std::setw(cellWidth - 1) << std::setfill(' ');
+		row_stream << innerSideBorder << std::setw(cellWidth - 1) << std::setfill(' ');
 	}
 	if (rows > 1)
 		row_stream << innerSideBorder;
@@ -193,23 +194,27 @@ std::string ConsoleFormat::RowString_highlight(const std::vector<std::string>& s
 		for (int m = 0; m < rows; m++)
 
 		{
-			if (stringVector[m][index[m]] == ' ') index[m]++;
-			int j = 0;
 
 			if (borders & BORDER::UNDERSCORE)
 				row_stream << manip::begin_underscore;
 
-			while (j < line_length && index[m] < stringVector[m].length())
-			{
-				row_stream << stringVector[m][index[m]];
-				index[m]++;
-				j++;
-			}
+			unsigned first_char_i = index[m];
+
+			unsigned len = (index[m] + line_length) < stringVector[m].length() ? line_length : stringVector[m].length() - first_char_i;
+
+			std::string string_part = stringVector[m].substr(first_char_i);
+			string_part = string_part.substr(0, len);
+
+			row_stream << std::setw(half_line_length) << string_part.substr(0, string_part.length() / 2)
+				<< string_part.substr(string_part.length() / 2)
+				<< std::setw(half_line_length - (string_part.length() - string_part.length() / 2)) << "";
+
+			index[m] = first_char_i + len;
+
 
 			if (borders & BORDER::UNDERSCORE)
 				row_stream << manip::end_underscore;
 
-			row_stream << std::setw(line_length - j + 1) << std::setfill(' ');
 			if (m == rows - 1)
 				row_stream << rightBorder;
 			else
@@ -303,10 +308,13 @@ void ConsoleFormat::PrintRow(const std::vector<std::string>& stringVector,
 
 		{
 			if (stringVector[m][index[m]] == ' ') index[m]++;
-			int j = 0;
 
 			if (borders & BORDER::UNDERSCORE)
 				std::cout << manip::begin_underscore;
+
+
+			int j = 0;
+
 
 			while (j < line_length && index[m] < stringVector[m].length())
 			{
@@ -357,7 +365,7 @@ std::string ConsoleFormat::CenteredLine(std::string str, std::string format, con
 	line_stream << format;
 	line_stream << std::setw(offset) << std::setfill(fill)
 		<< str.substr(0, half_length) << str.substr(half_length)
-		<< std::setw(offset - str.length() + half_length ) << std::setfill(fill) << '\n';
+		<< std::setw(offset - str.length() + half_length) << std::setfill(fill) << '\n';
 	line_stream << manip::reset;
 
 	//std::string line = line_stream.str();
@@ -393,10 +401,10 @@ std::string ConsoleFormat::StringBox(std::string str, unsigned boxWidth)
 
 
 	return line_stream.str();
-		
+
 }
 
 size_t ConsoleFormat::offset(size_t console_width, size_t row_width, size_t rows)
 {
-	return (console_width - row_width) / 2 + rows / 2 - 3;
+	return (console_width - row_width) / 2 + rows / 2;
 }

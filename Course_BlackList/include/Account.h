@@ -60,9 +60,6 @@ protected:
 public:
 	Access access;
 	Level level;
-	/*static bool LoadAccounts(const char* path);
-	static bool SaveAccounts(const char* path);*/
-
 
 	friend std::ofstream& operator<< (std::ofstream& ofs, const Account& acc);
 	friend std::ifstream& operator>> (std::ifstream& ofs, Account& acc);

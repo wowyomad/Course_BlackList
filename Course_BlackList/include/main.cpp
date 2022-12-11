@@ -21,66 +21,38 @@ int CONSTANT::CELL_WIDTH;
 int CONSTANT::ROW_WIDTH;
 int CONSTANT::BOX_WIDTH;
 
-void ClearScreen()
+void ClearScreen(COORD home = {0, 0})
 {
-	HANDLE                     hStdOut;
+	HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+
 	CONSOLE_SCREEN_BUFFER_INFO csbi;
-	DWORD                      count;
-	DWORD                      cellCount;
-	COORD                      homeCoords = { 0, 0 };
+	GetConsoleScreenBufferInfo(handle, &csbi);
+	DWORD cellCout = csbi.dwSize.X * csbi.dwSize.Y;
 
-	hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
-	if (hStdOut == INVALID_HANDLE_VALUE) return;
+	DWORD count;
+	FillConsoleOutputCharacter(handle, ' ', cellCout, home, &count);
+	FillConsoleOutputAttribute(handle, csbi.wAttributes, cellCout, home, &count);
 
-	/* Get the number of cells in the current buffer */
-	if (!GetConsoleScreenBufferInfo(hStdOut, &csbi)) return;
-	cellCount = csbi.dwSize.X * csbi.dwSize.Y;
-
-	/* Fill the entire buffer with spaces */
-	if (!FillConsoleOutputCharacter(
-		hStdOut,
-		(TCHAR)' ',
-		cellCount,
-		homeCoords,
-		&count
-	)) return;
-
-	/* Fill the entire buffer with the current colors and attributes */
-	if (!FillConsoleOutputAttribute(
-		hStdOut,
-		csbi.wAttributes,
-		cellCount,
-		homeCoords,
-		&count
-	)) return;
-
-	/* Move the cursor home */
-	SetConsoleCursorPosition(hStdOut, homeCoords);
+	SetConsoleCursorPosition(handle, home);
 }
 
-
-int main()
+void demo_main()
 {
-	SetConsoleCP(1251);
-	SetConsoleOutputCP(1251);
-
-	Setup();
-	CONSTANT::CONSOLE_WIDTH = Console().WindowSize().X;
-	CONSTANT::ROW_WIDTH = CONSTANT::CONSOLE_WIDTH * 0.8;
-	CONSTANT::BOX_WIDTH = CONSTANT::CONSOLE_WIDTH * 0.5;
-
-	//std::cout << ConsoleFormat::StringBox("dsfsfsfs");
-
-
-	std::map<int, int> map;
+	COORD home{ 0, 15 };
+	manip::pos initial_pos(home);
+	std::cout << initial_pos;
+	/*for (size_t i = 0; i < 14; i++)
+	{
+		std::cout << "row\n";
+	}*/
 
 	std::vector<Account> vec;
-	int size = 25;
+	int size = 151;
 	for (size_t i = 0; i < size; i++)
 	{
 		std::string login = std::to_string((i + 1) * 123);
 		Password p = make_password(std::to_string(i));
-		Account acc(login, std::to_string(rand() % 1000), p, Account::Access::Approved, Account::Level::Admin);
+		Account acc(login, std::to_string(rand() % 1500), p, Account::Access::Approved, Account::Level::Admin);
 		acc.level = Account::Level::Client;
 		vec.push_back(acc);
 	}
@@ -92,19 +64,22 @@ int main()
 	vec[9].level = Account::Level::Admin;
 
 	vec[9].setLogin("1321321312371eourhasfhlkdsflsjdfkldsjflksjdflsdjflksdfjsdfksdflksjdflksjdfsidu7f980u3209u4oi32jhl");
+	vec[2].setLogin("1321321312371eourhasfhlkdsflsjdfkldsjflksjdflsdjflksdfjsdfksdflksjdflksjdfsidu7f980u3209u4oi32jhl");
+
+	vec[5].setLogin("1321321312371eourhasfhlkdsflsjdfkldsjflksjdflsdjflksdfjsdfksdflksjdflksjdfsidu7f980u3209u4oi32jhl");
 
 
 
+	int cols = 10;
 	int page = 2;
-	int pos = page * 10;
-	int max_page = vec.size() / 10;
-	manip::pos initial_pos;
+	int pos = page * cols;
+	int max_page = (vec.size() - 1) / cols;
 	while (true)
 	{
 		std::cout << Account::TopRow();
-		size_t max_i = ((vec.size() - page * 10) >= 10) ? (page + 1) * 10 : (page + 1) * 10 - (10 - vec.size() % 10);
+		size_t max_i = ((vec.size() - page * cols) >= cols) ? (page + 1) * cols : (page + 1) * cols - (cols - vec.size() % cols);
 		max_i -= 1;
-		for (size_t i = page * 10; i <= max_i; i++)
+		for (size_t i = page * cols; i <= max_i; i++)
 		{
 
 			if (i == pos)
@@ -126,19 +101,31 @@ int main()
 			{
 				if (pos < max_i)
 					pos++;
+				else if (page < max_page)
+				{
+					page++;
+					pos++;
+					ClearScreen(home);
+				}
 			}
 			else if (ch == CONSTANT::KEY_ARROW_UP)
 			{
-				if (pos > page * 10)
+				if (pos > page * cols)
 					pos--;
+				else if (page > 0)
+				{
+					page--;
+					pos--;
+					ClearScreen(home);
+				}
 			}
 			else if (ch == CONSTANT::KEY_ARROW_LEFT)
 			{
 				if (page > 0)
 				{
 					page--;
-					pos = 10 * page;
-					ClearScreen();
+					pos = cols * page;
+					ClearScreen(home);
 				}
 			}
 			else if (ch == CONSTANT::KEY_ARROW_RIGHT)
@@ -146,8 +133,8 @@ int main()
 				if (page < max_page)
 				{
 					page++;
-					pos = 10 * page;
-					ClearScreen();
+					pos = cols * page;
+					ClearScreen(home);
 
 				}
 			}
@@ -156,7 +143,7 @@ int main()
 		else if (ch == CONSTANT::ENTER)
 		{
 
-			ClearScreen();
+			ClearScreen(home);
 			int line = 0;
 			while (true)
 			{
@@ -186,15 +173,26 @@ int main()
 				}
 				else if (ch == CONSTANT::ENTER)
 					break;
-				std::cout << manip::pos(0, 0);
+				std::cout << manip::pos(home);
 
 
 			}
-			ClearScreen();
-			initial_pos = { 0,0 };
+			ClearScreen(home);
 		}
 
-		std::cout << manip::pos(initial_pos);
+		std::cout << manip::pos(home);
 	}
+}
 
+int main()
+{
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
+
+	Setup();
+	CONSTANT::CONSOLE_WIDTH = Console().WindowSize().X;
+	CONSTANT::ROW_WIDTH = CONSTANT::CONSOLE_WIDTH * 0.9;
+	CONSTANT::BOX_WIDTH = CONSTANT::CONSOLE_WIDTH * 0.5;
+
+	demo_main();
 }

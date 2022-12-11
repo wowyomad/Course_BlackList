@@ -103,9 +103,7 @@ Password make_password(std::string& input)
 
 Password make_password(std::string&& input)
 {
-	std::string salt = RNG::GenerateNum_str();
-	std::string hash = RNG::HashString_withSalt(input, salt);
-	return Password(hash, salt);
+	return make_password(input);
 }
 
 Password::Password(std::string& hash, std::string& salt)

@@ -95,9 +95,19 @@ std::fstream& operator>>(std::fstream& ifs, Account& acc)
 	return ifs;
 }
 
-void Account::UpdatePassword(const std::string& newPassword)
+bool Account::UpdateLogin(const std::string& login)
 {
-	this->password = make_password(newPassword);
+	if (Account::login_is_uniqiue(login))
+	{
+		this->login = login;
+		return true;
+	}
+	return false;
+}
+
+void Account::UpdatePassword(const std::string& password_string)
+{
+	this->password = make_password(password_string);
 }
 
 
@@ -311,7 +321,13 @@ void Account::RemoveUser(const size_t index)
 
 	vector.erase(vector.begin() + index);
 }
-
+bool Account::login_is_uniqiue(const std::string& login)
+{
+	for (const std::shared_ptr<Account>& acc : vector)
+		if (acc->login == login)
+			return false;
+	return true;
+}
 
 FileStatus Account::GetFileStatus()
 {
@@ -339,3 +355,4 @@ Account make_account_admin(const std::string& login, const std::string& string_p
 {
 	return make_account(login, string_password, Account::Access::Approved, Account::Level::Admin);
 }
+

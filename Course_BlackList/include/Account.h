@@ -44,7 +44,6 @@ public:
 	Account& operator=(const Account& other);
 	Account& operator=(const Account&& other);
 
-	void UpdatePassword(const std::string& newPassword);
 
 	std::string InfoRow(const int& count = 0) const;
 	std::string InfoRow_highlight(const int& count = 0) const;
@@ -64,8 +63,11 @@ public:
 
 	void print();
 
-	void setId(std::string&& id) { this->id = id; }
-	void setLogin(std::string&& login) { this->login = login; }
+	void setId(const std::string& id) { this->id = id; }
+	void setLogin(const std::string& login) { this->login = login; }
+
+	bool UpdateLogin(const std::string& login);
+	void UpdatePassword(const std::string& password_string);
 
 	inline std::string getId() const { return id; }
 	inline std::string getLogin() const { return login; }
@@ -94,7 +96,7 @@ public:
 	static void vector_print_highlight(size_t highlight_index);
 	static void vector_print_highlight(size_t highlight_index, size_t first, size_t amount);
 
-	static size_t loginTaken(std::string& login);
+	static bool login_is_uniqiue(const std::string& login);
 	static std::string GenerateId();
 };
 

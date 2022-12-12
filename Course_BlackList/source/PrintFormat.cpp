@@ -17,6 +17,8 @@ std::string ConsoleFormat::RowString(const std::vector<std::string>& stringVecto
 	int console_width)
 {
 	if (row_width < 3) row_width = CONSTANT::ROW_WIDTH;
+	if (stringVector.size() <= 0)
+		throw std::invalid_argument("fdsf");
 
 	unsigned rows = stringVector.size();
 	int cellWidth = row_width / rows + (row_width / rows) % 2;
@@ -406,5 +408,5 @@ std::string ConsoleFormat::StringBox(std::string str, unsigned boxWidth)
 
 size_t ConsoleFormat::offset(size_t console_width, size_t row_width, size_t rows)
 {
-	return (console_width - row_width) / 2 + rows / 2;
+	return (console_width - row_width) / 2;
 }

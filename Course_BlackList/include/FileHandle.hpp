@@ -37,7 +37,7 @@ public:
 		if (!file.is_open()) return false;
 		for (std::shared_ptr<T>& it : vector)
 		{
-			file << it.get();
+			file << *it.get();
 		}
 		return true;
 	}

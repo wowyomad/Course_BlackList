@@ -189,6 +189,8 @@ void demo_main()
 	}
 }
 
+#include <set>
+
 int main()
 {
 	SetConsoleCP(1251);
@@ -196,37 +198,7 @@ int main()
 
 	Setup();
 	CONSTANT::CONSOLE_WIDTH = Console().WindowSize().X;
-	CONSTANT::ROW_WIDTH = CONSTANT::CONSOLE_WIDTH * 0.8;
+	CONSTANT::ROW_WIDTH = CONSTANT::CONSOLE_WIDTH * .8;
 	CONSTANT::BOX_WIDTH = CONSTANT::CONSOLE_WIDTH * 0.5;
-
-
-	for (size_t i = 0; i < 5; i++)
-	{
-		auto acc = std::make_shared<Account>(
-			std::to_string(i * 123),
-			std::to_string(rand() % 1000),
-			make_password("123"),
-			Account::Access::Approved,
-			Account::Level::Client
-			);
-		Account::vector_push(*acc);
-	}/*
-
-	Account::vector_print_highlight(1, 0, 5);
-
-	UI::PrintOption("1.Привет");
-	UI::PrintOption_highlight("2.Пока");
-	UI::PrintOption("3.Gaeeeyy");
-
-	UI::WaitTillEnter();*/
-
-	Account acc;
-	acc = make_account_admin("boba", "1234");
-	Account::vector_push(acc);
-	acc = make_account_client("joja", "1234");
-	Account::vector_push(acc);
-	acc = make_account_client_approved("bins", "1234");
-	Account::vector_push(acc);
-
-	Account::vector_print_highlight(-1);
+	
 }

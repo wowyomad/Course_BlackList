@@ -23,22 +23,6 @@ int CONSTANT::CELL_WIDTH;
 int CONSTANT::ROW_WIDTH;
 int CONSTANT::BOX_WIDTH;
 
-void ClearScreen(COORD home = { 0, 0 })
-{
-	HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
-
-	CONSOLE_SCREEN_BUFFER_INFO csbi;
-	GetConsoleScreenBufferInfo(handle, &csbi);
-	DWORD cellCout = csbi.dwSize.X * csbi.dwSize.Y;
-
-	DWORD count;
-	FillConsoleOutputCharacterA(handle, ' ', cellCout, home, &count);
-	FillConsoleOutputAttribute(handle, csbi.wAttributes, cellCout, home, &count);
-
-	SetConsoleCursorPosition(handle, home);
-	/*system("cls");*/
-}
-
 #include "UserInterface.h"
 
 void demo_main()
@@ -200,5 +184,43 @@ int main()
 	CONSTANT::CONSOLE_WIDTH = Console().WindowSize().X;
 	CONSTANT::ROW_WIDTH = CONSTANT::CONSOLE_WIDTH * .8;
 	CONSTANT::BOX_WIDTH = CONSTANT::CONSOLE_WIDTH * 0.5;
+
+	COORD home = { 0, 20 };
 	
+	std::vector<std::string> options{ "option1", "option2", "opion3", "opion4"};
+	OptionsInterface o(options, home);
+
+	ClearScreen();
+	
+	while (true)
+	{
+		o.render();
+		o.update();
+
+		event event = o.event();
+
+		if (event == events::select)
+		{
+			ClearScreen(home);
+
+			switch (o.position())
+			{
+			case 0:
+				UI::PrintMessage("Опция один");
+				break;
+			case 1:
+				UI::PrintMessage("Опция два");
+				break;
+			case 2:
+				UI::PrintMessage("Опция пять");
+				break;
+			case 3:
+				UI::PrintMessage("Опция четыре");
+				break;
+			}
+			UI::WaitTillEnter();
+			ClearScreen();
+
+		}
+	}
 }

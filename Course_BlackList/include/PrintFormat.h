@@ -51,3 +51,5 @@ namespace ConsoleFormat
 
 	size_t offset(size_t console_width, size_t row_width, size_t rows);
 }
+
+void ClearScreen(COORD home = { 0, 0 });

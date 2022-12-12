@@ -410,3 +410,18 @@ size_t ConsoleFormat::offset(size_t console_width, size_t row_width, size_t rows
 {
 	return (console_width - row_width) / 2;
 }
+
+void ClearScreen(COORD home)
+{
+	HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	GetConsoleScreenBufferInfo(handle, &csbi);
+	DWORD cellCout = csbi.dwSize.X * csbi.dwSize.Y;
+
+	DWORD count;
+	FillConsoleOutputCharacter(handle, ' ', cellCout, home, &count);
+	FillConsoleOutputAttribute(handle, csbi.wAttributes, cellCout, home, &count);
+
+	SetConsoleCursorPosition(handle, home);
+}

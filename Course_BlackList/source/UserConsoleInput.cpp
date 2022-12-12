@@ -194,14 +194,14 @@ tm InputDate(char* msg)
 	return date;
 }
 
-tm InputDate(manip::pos begin)
+tm InputDate(manip::pos home)
 {
 	const char regex_pattern[] = "\\b\\d{2}(.)\\d{2}(.)\\d{4}\\b";
 	const char date_pattern[] = "%d.%m.%Y";
 
 	const unsigned short index[8] = { 0,1, 3,4, 6,7,8,9 };
-	unsigned short y = begin.y;
-	unsigned short x = begin.x;
+	unsigned short y = home.y;
+	unsigned short x = home.x;
 
 	while (true)
 	{
@@ -242,6 +242,7 @@ tm InputDate(manip::pos begin)
 		}
 	}
 }
+
 
 tm InputTime(manip::pos begin)
 {

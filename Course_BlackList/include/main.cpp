@@ -186,12 +186,12 @@ int main()
 	CONSTANT::BOX_WIDTH = CONSTANT::CONSOLE_WIDTH * 0.5;
 
 	COORD home = { 0, 20 };
-	
-	std::vector<std::string> options{ "option1", "option2", "opion3", "opion4"};
+
+	std::vector<std::string> options{ "option1", "option2", "opion3", "opion4" };
 	OptionsInterface o(options, home);
 
 	ClearScreen();
-	
+
 	while (true)
 	{
 		o.render();

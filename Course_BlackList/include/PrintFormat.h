@@ -53,3 +53,4 @@ namespace ConsoleFormat
 }
 
 void ClearScreen(COORD home = { 0, 0 });
+void ClearScreen(COORD home, unsigned short line_count);

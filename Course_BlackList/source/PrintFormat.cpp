@@ -417,11 +417,27 @@ void ClearScreen(COORD home)
 
 	CONSOLE_SCREEN_BUFFER_INFO csbi;
 	GetConsoleScreenBufferInfo(handle, &csbi);
-	DWORD cellCout = csbi.dwSize.X * csbi.dwSize.Y;
+	DWORD cellCount = csbi.dwSize.X * csbi.dwSize.Y;
 
 	DWORD count;
-	FillConsoleOutputCharacter(handle, ' ', cellCout, home, &count);
-	FillConsoleOutputAttribute(handle, csbi.wAttributes, cellCout, home, &count);
+	FillConsoleOutputCharacter(handle, ' ', cellCount, home, &count);
+	FillConsoleOutputAttribute(handle, csbi.wAttributes, cellCount, home, &count);
+
+	SetConsoleCursorPosition(handle, home);
+}
+
+void ClearScreen(COORD home, unsigned short line_count)
+{
+	HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	GetConsoleScreenBufferInfo(handle, &csbi);
+	DWORD cellCount = csbi.dwSize.X * csbi.dwSize.Y - (csbi.dwSize.Y - line_count) * csbi.dwSize.X;
+
+
+	DWORD count;
+	FillConsoleOutputCharacter(handle, ' ', cellCount, home, &count);
+	FillConsoleOutputAttribute(handle, csbi.wAttributes, cellCount, home, &count);
 
 	SetConsoleCursorPosition(handle, home);
 }

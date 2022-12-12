@@ -13,11 +13,35 @@ void UI::HelloScreen()
 
 		PrintHeader(message::_HelloScreen_header);
 
-		PrintOption("1." + message::_HelloScreen_login);
-		PrintOption("2." + message::_HelloScreen_login);
+		PrintOption("1." + message::_MainScreen_login);
+		PrintOption("2." + message::_MainScreen_login);
 
 		UI::WaitTillEnter();
 	}
+}
+
+void UI::MainScreen()
+{
+	std::vector<std::string>options{
+		message::_MainScreen_login,
+		message::_MainScreen_register
+	};
+
+	COORD home = { 0, 2 };
+	OptionsInterface o(options, home);
+
+	do
+	{
+		o.render();
+		o.update();
+
+		if (o.event() == events::select)
+		{
+
+		}
+	} while (true);
+
+
 }
 
 void UI::Login()
@@ -55,6 +79,16 @@ void UI::PrintOption_highlight(const message::message& option)
 void UI::PrintLine(const char character)
 {
 	std::cout << std::setfill(character) << std::setw(CONSTANT::CONSOLE_WIDTH) << '\n';
+}
+
+void UI::PrintEnter()
+{
+	ConsoleFormat::PrintCenteredLine(message::_select, manip::green_bright);
+}
+
+void UI::PrintEsc()
+{
+	ConsoleFormat::PrintCenteredLine(message::_back, manip::red_bright);
 }
 
 void UI::WaitTillEnter()
@@ -112,6 +146,8 @@ void OptionsInterface::render()
 			UI::PrintOption(option);
 		i++;
 	}
+	UI::PrintEnter();
+	UI::PrintEsc();
 }
 
 OptionsInterface::OptionsInterface(const std::vector<std::string>& options, COORD home)

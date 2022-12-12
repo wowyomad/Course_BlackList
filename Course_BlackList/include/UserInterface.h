@@ -7,16 +7,25 @@ namespace message
 {
 	using message = std::string;
 
-	static message _HelloScreen_hello = "Добро пожаловать в ад";
-	static message _HelloScreen_header = "Меню входа/регистрации";
-	static message _HelloScreen_register = "Регистрация";
-	static message _HelloScreen_login = "Логин";
+	static const message _HelloScreen_hello = "Добро пожаловать в ад";
+	static const message _HelloScreen_header = "Меню входа/регистрации";
+	static const message _MainScreen_register = "Регистрация";
+	static const message _MainScreen_login = "Логин";
 
+		   
+	static const message _key_enter = "ENTER";
+	static const message _key_esc = "ESC";
+
+	static const message _back = "Назад - " + _key_esc;
+	static const message _exit = "Выход - " + _key_esc;
+	static const message _select = "Выбор - " + _key_enter;
 }
 
 namespace UI
 {
 	void HelloScreen();
+
+	void MainScreen();
 
 	void Login();
 	void Register();
@@ -26,6 +35,9 @@ namespace UI
 	void PrintMessage(const message::message& message);
 	void PrintOption_highlight(const message::message& option);
 	void PrintLine(const char character = '-');
+
+	void PrintEnter();
+	void PrintEsc();
 
 	void WaitTillEnter();
 }

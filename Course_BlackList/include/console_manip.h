@@ -1,7 +1,10 @@
 ﻿#pragma once
-#include <Windows.h>
+#include "Password.h"
+#include <memory>
 
+#include <Windows.h>
 #include <iostream>
+
 
 class Console
 {
@@ -109,7 +112,13 @@ namespace manip
 	const char bg_purple_bright[] = "\033[45;1m";
 	const char bg_cyan_bright[] = "\033[46;1m";
 
-	const char bg_cyan[] = "\033[36;1m";
+	const char black_bright[] = "\033[30;1m";
+	const char red_bright[] = "\033[31;1m";
+	const char green_bright[] = "\033[32;1m";
+	const char yellow_bright[] = "\033[33;1m";
+	const char blue_bright[] = "\033[34;1m";
+	const char purple_bright[] = "\033[35;1m";
+	const char cyan[] = "\033[36;1m";
 
 
 	const char reset[] = "\033[0m";

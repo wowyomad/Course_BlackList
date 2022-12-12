@@ -2,35 +2,12 @@
 
 #include <string>
 #include <vector>
-
-#include "FileHandle.hpp"
+#include <memory>
 
 #include "common.h"
 
-class Password
-{
-protected:
-	std::string hash;
-	std::string salt;
-
-public:
-	Password(std::string& hash, std::string& salt);
-	Password(const Password& other) = default;
-	Password(Password&& other) noexcept;
-	Password();
-
-	bool operator==(const Password& other) const;
-
-	friend std::ofstream& operator<<(std::ofstream& ofs, const Password& obj);
-	friend std::ifstream& operator>>(std::ifstream& ifs, Password& obj);
-
-	friend std::ostream& operator<<(std::ostream& os, const Password& obj);
-
-	bool same_as(std::string input);
-};
-
-Password make_password(std::string& input);
-Password make_password(std::string&& input);
+#include "Password.h"
+#include "FileHandle.hpp"
 
 
 class Account
@@ -56,24 +33,26 @@ protected:
 	std::string id;
 	std::string login;
 	Password password;
-	
+
 public:
 	Access access;
 	Level level;
 
-	friend std::ofstream& operator<< (std::ofstream& ofs, const Account& acc);
-	friend std::ifstream& operator>> (std::ifstream& ofs, Account& acc);
+	friend std::fstream& operator<< (std::fstream& ofs, const Account& acc);
+	friend std::fstream& operator>> (std::fstream& ofs, Account& acc);
 
 	Account& operator=(const Account& other);
 	Account& operator=(const Account&& other);
 
+	void UpdatePassword(const std::string& newPassword);
 
-	std::string InfoRow (const int& count = 1) const;
-	std::string InfoRow_highlight(const int& count) const;
+	std::string InfoRow(const int& count = 0) const;
+	std::string InfoRow_highlight(const int& count = 0) const;
 
-	void PrintInfo_underscore(const int& count = 1);
-	void PrintInfoWithTop();
+	static std::string TopRow_num();
 	static std::string TopRow();
+
+	static void PrintVector_highlight(const size_t index);
 
 	Account();
 	Account(const std::string& login,
@@ -92,18 +71,28 @@ public:
 	inline std::string getId() const { return id; }
 
 private:
-	static std::vector<std::shared_ptr<Account>> Vector;
+	static std::vector<std::shared_ptr<Account>> vector;
 	static size_t MAX_VECTOR_SIZE;
 	static size_t RESERVE_SIZE;
 	static size_t BUFFER_SIZE;
-	static std::string path_accounts;
 
 public:
-	static void LoadFileToVector();
-	static void SaveVectorToFile();
+	static void CreateNewFile();
+	static bool ReadFile();
+	static bool WriteFile();
+	static FileStatus GetFileStatus();
+
+	static void CopyVector(std::vector <std::shared_ptr<Account>>& dest);
+	static void RemoveUser(const size_t index);
+	static std::shared_ptr<Account> GetAccount(const int index);
+	static std::shared_ptr<Account> GetAccount(std::string login);
+	static size_t GetUserIndex(std::string login);
+
 
 	static void vector_push(const Account& acc);
 	static std::shared_ptr<Account> vector_get(size_t index);
 	static void vector_print_highlight(size_t highlight_index);
 	static void vector_print_highlight(size_t highlight_index, size_t first, size_t last);
+
+	static size_t loginTaken(std::string& login);
 };

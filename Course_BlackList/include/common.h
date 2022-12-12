@@ -6,6 +6,7 @@ namespace common
 {
 	static const char msg_exception[] = "Неизвестное исключение.";
 	static const char msg_invalid_separtor[] = "Ошибка получения десятичного разделителя.";
+	
 
 	//исключение: неизвестное
 	class exception
@@ -50,7 +51,11 @@ namespace CONSTANT
 	const unsigned short PASSWORD_LEN_MAX = 16;
 	const unsigned short PASSWORD_LEN_MIN = 3;
 
-	const char PATH_ACCOUNTS[] = "Accounts.bin";
-	const char PATH_BANK_DATA[] = "BankData.bin";
-	const char PATH_CLIENTS[] = "ClientsData.bin";
+}
+
+namespace PATH
+{
+	const char Accounts[] = "Accounts.txt";
+	const char Clients[] = "Clietns.txt";
+	const char Bank[] = "Bank.txt";
 }

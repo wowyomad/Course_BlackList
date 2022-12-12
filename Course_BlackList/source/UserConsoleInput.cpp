@@ -1,8 +1,11 @@
 ﻿#include "UserConsoleInput.h"
 #include "Date.h"
+#include "PrintFormat.h"
 
 #include <conio.h>
 #include <regex>
+#include <sstream>
+#include <iomanip>
 
 bool is_russian(const char ch)
 {
@@ -196,10 +199,9 @@ tm InputDate(manip::pos begin)
 	const char regex_pattern[] = "\\b\\d{2}(.)\\d{2}(.)\\d{4}\\b";
 	const char date_pattern[] = "%d.%m.%Y";
 
-	const size_t length = 6;
-	short index[8] = { 0, 1, 3, 4, 6, 7, 8, 9 };
-	short y = begin.y;
-	short x = begin.x;
+	const unsigned short index[8] = { 0,1, 3,4, 6,7,8,9 };
+	unsigned short y = begin.y;
+	unsigned short x = begin.x;
 
 	while (true)
 	{
@@ -241,22 +243,58 @@ tm InputDate(manip::pos begin)
 	}
 }
 
-tm InputTime(char* msg)
+tm InputTime(manip::pos begin)
 {
 	return tm();
 }
 
 std::string DateString(tm& date)
 {
-	return std::string();
+	std::stringstream date_stream;
+	date_stream << std::put_time(&date, "%d.%m.%Y");
+	return date_stream.str();
+
 }
 
-std::string TimeSTring(tm& time)
+std::string TimeString(tm& time)
 {
 	return std::string();
+	std::stringstream time_stream;
+	time_stream << std::put_time(&time, "%H:%M:%S");
+	return time_stream.str();
 }
 
-bool AcceptAction(char* msg)
+bool AcceptAction(std::string& msg)
 {
-	return false;
+	using namespace ConsoleFormat;
+
+	PrintCenteredNewLine(msg, manip::reset);
+
+	PrintCenteredLine(MSG_ACCEPT, manip::bg_green_bright);
+	PrintCenteredLine(MSG_DECLINE, manip::bg_red_bright);
+
+	char input;
+	do
+	{
+		input = _getch();
+
+	} while (input != CONSTANT::ENTER and input != CONSTANT::ESCAPE);
+
+	switch (input)
+	{
+	case CONSTANT::ENTER:
+		return true;
+	case CONSTANT::ESCAPE:
+		return false;
+	}
+}
+
+bool AcceptAction(std::string&& msg)
+{
+	return AcceptAction(msg);
+}
+
+bool AcceptAction(const char* msg)
+{
+	return AcceptAction(std::string(msg));
 }

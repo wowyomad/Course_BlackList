@@ -187,25 +187,31 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="include\Account.h" />
-    <ClInclude Include="include\BankClient.h" />
+    <ClInclude Include="include\BankUser.h" />
     <ClInclude Include="include\common.h" />
     <ClInclude Include="include\console_manip.h" />
     <ClInclude Include="include\Date.h" />
+    <ClInclude Include="include\Deposit.h" />
     <ClInclude Include="include\FileHandle.hpp" />
     <ClInclude Include="include\Money.hpp" />
+    <ClInclude Include="include\Password.h" />
     <ClInclude Include="include\PrintFormat.h" />
     <ClInclude Include="include\RNG.hpp" />
     <ClInclude Include="include\Setup.hpp" />
     <ClInclude Include="include\UserConsoleInput.h" />
+    <ClInclude Include="include\UserInterface.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="include\main.cpp" />
     <ClCompile Include="source\Account.cpp" />
-    <ClCompile Include="source\BankClient.cpp" />
+    <ClCompile Include="source\BankUser.cpp" />
     <ClCompile Include="source\console_manip.cpp" />
     <ClCompile Include="source\Date.cpp" />
+    <ClCompile Include="source\Deposit.cpp" />
+    <ClCompile Include="source\Password.cpp" />
     <ClCompile Include="source\PrintFormat.cpp" />
     <ClCompile Include="source\UserConsoleInput.cpp" />
+    <ClCompile Include="source\UserInterface.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

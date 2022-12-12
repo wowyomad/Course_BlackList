@@ -131,7 +131,7 @@ std::string ConsoleFormat::RowString_highlight(const std::vector<std::string>& s
 	int cellWidth = row_width / rows + (row_width / rows) % 2;
 	cellWidth = cellWidth > 2 ? cellWidth : 3;
 
-	unsigned maxLength = [stringVector]()->unsigned
+	unsigned maxLength = [&stringVector]()->unsigned
 	{
 		unsigned maxLength = 0;
 		for (const auto& it : stringVector)
@@ -160,7 +160,7 @@ std::string ConsoleFormat::RowString_highlight(const std::vector<std::string>& s
 
 	if (BORDER::TOP & borders)
 	{
-		row_stream << std::setw(offset) << std::setfill(' ') << ' ' << ' ';
+		row_stream << std::setw(offset) << std::setfill(' ') << ' ';
 		for (int i = 0; i < rows; i++)
 		{
 			row_stream << manip::bg_green_bright << std::setw(cellWidth - 1) << std::setfill('_') << ' ';
@@ -359,13 +359,13 @@ void ConsoleFormat::PrintCenteredNewLine(std::string str, std::string format, co
 std::string ConsoleFormat::CenteredLine(std::string str, std::string format, const char fill, const unsigned int width)
 {
 	unsigned offset = width / 2;
-	size_t half_length = str.length() / 2;
+	size_t half_length = str.length() - str.length() / 2;
 	std::stringstream line_stream;
 
 	line_stream << format;
 	line_stream << std::setw(offset) << std::setfill(fill)
 		<< str.substr(0, half_length) << str.substr(half_length)
-		<< std::setw(offset - str.length() + half_length) << std::setfill(fill) << '\n';
+		<< std::setw(offset - str.length() + half_length + 2) << std::setfill(fill) << '\n';
 	line_stream << manip::reset;
 
 	//std::string line = line_stream.str();

@@ -15,12 +15,12 @@ namespace ConsoleFormat
 		const uint8_t BOTTOM = 0b00000010;
 		const uint8_t LEFT = 0b00000100;
 		const uint8_t RIGHT = 0b00001000;
-		const uint8_t VERTICAL = 0b00100000;
-		const uint8_t UNDERSCORE = 0b10000000;
+		const uint8_t VERTICAL = 0b00010000;
+		const uint8_t UNDERSCORE = 0b00100000;
 	}
 
-	void PrintCenteredLine(std::string str, std::string format, const char fill = ' ', const unsigned width = CONSTANT::CONSOLE_WIDTH);
-	void PrintCenteredNewLine(std::string str, std::string format, const char fill = ' ', const unsigned width = CONSTANT::CONSOLE_WIDTH);
+	void PrintCenteredLine(std::string str, std::string format = "", const char fill = ' ', const unsigned width = CONSTANT::CONSOLE_WIDTH);
+	void PrintCenteredNewLine(std::string str, std::string format = "", const char fill = ' ', const unsigned width = CONSTANT::CONSOLE_WIDTH);
 
 	std::string CenteredLine(std::string str, std::string format, const char fill = ' ', const unsigned width = CONSTANT::CONSOLE_WIDTH);
 	std::string CenteredNewLine(std::string str, std::string format, const char fill = ' ', const unsigned width = CONSTANT::CONSOLE_WIDTH);

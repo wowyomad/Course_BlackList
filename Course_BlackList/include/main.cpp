@@ -2,7 +2,9 @@
 #include "Setup.hpp"
 
 #include "UserConsoleInput.h"
+#include "Date.h"
 
+#include "Deposit.h"
 
 #include <array>
 #include <memory>
@@ -21,7 +23,7 @@ int CONSTANT::CELL_WIDTH;
 int CONSTANT::ROW_WIDTH;
 int CONSTANT::BOX_WIDTH;
 
-void ClearScreen(COORD home = {0, 0})
+void ClearScreen(COORD home = { 0, 0 })
 {
 	HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
 
@@ -30,11 +32,14 @@ void ClearScreen(COORD home = {0, 0})
 	DWORD cellCout = csbi.dwSize.X * csbi.dwSize.Y;
 
 	DWORD count;
-	FillConsoleOutputCharacter(handle, ' ', cellCout, home, &count);
+	FillConsoleOutputCharacterA(handle, ' ', cellCout, home, &count);
 	FillConsoleOutputAttribute(handle, csbi.wAttributes, cellCout, home, &count);
 
 	SetConsoleCursorPosition(handle, home);
+	/*system("cls");*/
 }
+
+#include "UserInterface.h"
 
 void demo_main()
 {
@@ -47,7 +52,7 @@ void demo_main()
 	}*/
 
 	std::vector<Account> vec;
-	int size = 151;
+	int size = 36;
 	for (size_t i = 0; i < size; i++)
 	{
 		std::string login = std::to_string((i + 1) * 123);
@@ -76,7 +81,7 @@ void demo_main()
 	int max_page = (vec.size() - 1) / cols;
 	while (true)
 	{
-		std::cout << Account::TopRow();
+		std::cout << Account::TopRow_num();
 		size_t max_i = ((vec.size() - page * cols) >= cols) ? (page + 1) * cols : (page + 1) * cols - (cols - vec.size() % cols);
 		max_i -= 1;
 		for (size_t i = page * cols; i <= max_i; i++)
@@ -149,7 +154,7 @@ void demo_main()
 			{
 				for (int i = 0; i < 20; i++)
 				{
-					std::string color = manip::bg_cyan;
+					std::string color = manip::cyan;
 					if (i == line)
 						color = manip::bg_cyan_bright;
 					ConsoleFormat::PrintCenteredNewLine("Это ты типо нажал ЕНТЕР и теперь должен быть переход к меню с функциями для выбранной ячейки, но пока ничего не готово. Нажми теперь ЕСКЕЙП " + std::to_string(i),
@@ -194,5 +199,25 @@ int main()
 	CONSTANT::ROW_WIDTH = CONSTANT::CONSOLE_WIDTH * 0.8;
 	CONSTANT::BOX_WIDTH = CONSTANT::CONSOLE_WIDTH * 0.5;
 
-	demo_main();
+
+	for (size_t i = 0; i < 5; i++)
+	{
+		auto acc = std::make_shared<Account>(
+			std::to_string(i * 123),
+			std::to_string(rand() % 1000),
+			make_password("123"),
+			Account::Access::Approved,
+			Account::Level::Client
+			);
+		Account::vector_push(*acc);
+	}
+
+	Account::PrintVector_highlight(2);
+
+	UI::PrintHeader("Тествое меню");
+	UI::PrintOption("1.Привет");
+	UI::PrintOption_highlight("2.Пока");
+	UI::PrintOption("3.Gaeeeyy");
+
+	UI::WaitTillEnter();
 }

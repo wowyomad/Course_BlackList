@@ -6,9 +6,8 @@ bool str_to_tm(const char* str, const char* pattern, tm* datetime)
 {
 	std::istringstream is(str);
 	is >> std::get_time(datetime, pattern);
-	if (is.fail())
-		return false;
-	return true;
+
+	return !is.fail();
 }
 
 bool str_to_tm_leaps(const char* str, const char* pattern, tm* datetime)

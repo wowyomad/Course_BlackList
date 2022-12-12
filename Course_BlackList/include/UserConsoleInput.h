@@ -7,6 +7,9 @@
 #include "common.h"
 #include "console_manip.h"
 
+const char MSG_ACCEPT[] = "ENTER - Подтверить";
+const char MSG_DECLINE[] = "ESC - Отменить";
+
 bool is_russian(const char ch);
 bool is_english(const char ch);
 
@@ -17,8 +20,11 @@ tm InputDate(char* msg);
 tm InputDate(manip::pos begin = manip::pos(0,0));
 tm InputTime(char* msg);
 std::string DateString(tm& date);
-std::string TimeSTring(tm& time);
-bool AcceptAction(char* msg);
+std::string TimeString(tm& time);
+
+bool AcceptAction(std::string& msg);
+bool AcceptAction(const char* msg);
+bool AcceptAction(std::string&& msg);
 
 template <typename _Type>
 void InputVar(_Type& var, unsigned min, unsigned max, const char msg[] = "Ввод: ")

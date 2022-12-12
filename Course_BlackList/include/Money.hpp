@@ -24,11 +24,12 @@ class Money_64
 	SIGN sign = SIGN::positive;
 
 public:
-	Money_64() : whole(0), fraction(0) { std::cout << char(sign); }
+	Money_64() : whole(0), fraction(0) { }
 	Money_64(const Money_64& other) : whole(other.whole), fraction(other.fraction), sign(other.sign) {}
 	Money_64(Money_64&& other) : whole(other.whole), fraction(other.fraction), sign(other.sign) {}
 	Money_64(const std::string& value) : whole(0), fraction(0) { *this = value; }
 	Money_64(std::string&& value) : whole(0), fraction(0) { *this = std::move(value); }
+	Money_64(const int value) : whole(value), fraction(0) {}
 
 
 	Money_64 operator=(const std::string& value)
@@ -188,6 +189,10 @@ public:
 		fraction %= 100;
 
 		return *this;
+	}
+	Money_64 operator* (double mul)
+	{
+		return Money_64(*this) *= mul;
 	}
 
 	bool operator==(const Money_64& other) const

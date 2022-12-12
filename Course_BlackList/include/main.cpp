@@ -168,6 +168,11 @@ void demo_main()
 			}
 			ClearScreen(home);
 		}
+		else if (ch == CONSTANT::ESCAPE)
+		{
+			ClearScreen();
+			return;
+		}
 
 		std::cout << manip::pos(home);
 	}
@@ -185,6 +190,8 @@ int main()
 	CONSTANT::ROW_WIDTH = CONSTANT::CONSOLE_WIDTH * .8;
 	CONSTANT::BOX_WIDTH = CONSTANT::CONSOLE_WIDTH * 0.5;
 
+	UI::MainScreen();
+
 	COORD home = { 0, 20 };
 
 	std::vector<std::string> options{ "option1", "option2", "opion3", "opion4" };
@@ -201,12 +208,12 @@ int main()
 
 		if (event == events::select)
 		{
-			ClearScreen(home);
+			ClearScreen();
 
 			switch (o.position())
 			{
 			case 0:
-				UI::PrintMessage("Опция один");
+				demo_main();
 				break;
 			case 1:
 				UI::PrintMessage("Опция два");
@@ -218,6 +225,7 @@ int main()
 				UI::PrintMessage("Опция четыре");
 				break;
 			}
+			std::cout << manip::pos(0, 16);
 			UI::WaitTillEnter();
 			ClearScreen();
 

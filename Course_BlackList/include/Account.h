@@ -71,6 +71,8 @@ public:
 
 	inline std::string getId() const { return id; }
 	inline std::string getLogin() const { return login; }
+	inline Password getPassword() const { return password; }
+
 
 private:
 	static std::vector<std::shared_ptr<Account>> vector;
@@ -93,6 +95,7 @@ public:
 
 	static void vector_push(const Account& acc);
 	static std::shared_ptr<Account> vector_get(size_t index);
+	static std::shared_ptr<Account> vector_get(std::string login);
 	static void vector_print_highlight(size_t highlight_index);
 	static void vector_print_highlight(size_t highlight_index, size_t first, size_t amount);
 

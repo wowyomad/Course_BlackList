@@ -2,22 +2,20 @@
 
 #include <conio.h>
 #include <iomanip>
+#include <memory>
+
+#include "Account.h"
+#include "UserConsoleInput.h"
 
 void UI::HelloScreen()
 {
-	bool done = false;
+	ClearScreen();
 
-	while (!done)
-	{
-		ClearScreen();
+	PrintHeader(message::_HelloScreen_header);
 
-		PrintHeader(message::_HelloScreen_header);
+	UI::WaitTillEnter();
 
-		PrintOption("1." + message::_MainScreen_login);
-		PrintOption("2." + message::_MainScreen_login);
-
-		UI::WaitTillEnter();
-	}
+	UI::MainScreen();
 }
 
 void UI::MainScreen()
@@ -27,38 +25,218 @@ void UI::MainScreen()
 		message::_MainScreen_register
 	};
 
-	COORD home = { 0, 2 };
+	COORD home = { 0, 8 };
 	OptionsInterface o(options, home);
 
 	do
 	{
+		std::cout << manip::pos(0, home.Y - 3);
+		UI::PrintHeader(message::_MainScreen_header);
 		o.render();
 		o.update();
 
 		if (o.event() == events::select)
 		{
-
+			ClearScreen();
+			switch (o.position())
+			{
+			case 0:
+				UI::Login();
+				break;
+			case 1:
+				UI::Register(Account::Level::Client);
+				break;
+			}
 		}
+
+		else if (o.event() == events::back)
+			break;
+
 	} while (true);
 
-
+	Account::WriteFile();
 }
 
 void UI::Login()
 {
+	bool done = false;
+	bool logged = false;
+
+	Account account;
+
+	do
+	{
+		ClearScreen();
+		PrintHeader(message::_Login_header);
+
+		std::string login = InputLogin(CONSTANT::LOGIN_LEN_MIN, CONSTANT::LOGIN_LEN_MAX);
+		std::string password = InputPassword(CONSTANT::PASSWORD_LEN_MIN, CONSTANT::PASSWORD_LEN_MAX);
+
+		try
+		{
+			account = *Account::vector_get(login);
+			if (account.getPassword().same_as(password))
+				if (account.access != Account::Access::Denied)
+				{
+					done = true;
+					logged = true;
+				}
+				else
+				{
+					UI::PrintMessage(message::_Login_unavailable);
+				}
+			else
+			{
+				UI::PrintMessage(message::_Login_fail);
+
+			}
+		}
+		catch (std::out_of_range& exc)
+		{
+			UI::PrintMessage(message::_Login_fail);
+		}
+
+		if (!done)
+		{
+			UI::PrintMessage(message::_Login_back);
+			if (!UI::UserAccept()) done = true;
+		}
+	} while (!done);
+
+	if (logged)
+	{
+		UI::PrintMessage(message::_Login_success);
+		void (*Main)(std::shared_ptr<Account>);
+
+		
+		switch (account.level)
+		{
+		case Account::Level::Super:
+			Main = Main_Super;
+			break;
+		case Account::Level::Admin:
+			Main = Main_Admin;
+			break;
+		case Account::Level::Client:
+			Main = Main_Client;
+			break;
+		default:
+			throw std::exception();
+		}
+		UI::WaitTillEnter();
+		Main(std::make_shared<Account>(account));
+	}
+	ClearScreen();
+}
+
+void UI::Register(const Account::Level level)
+{
+	bool done = false;
+	bool registered = false;
+
+	do
+	{
+		ClearScreen();
+		PrintHeader(message::_Register_header);
+
+		std::string login = InputLogin(CONSTANT::LOGIN_LEN_MIN, CONSTANT::LOGIN_LEN_MAX);
+		std::string password = InputPassword(CONSTANT::PASSWORD_LEN_MIN, CONSTANT::PASSWORD_LEN_MAX);
+
+		if (Account::login_is_uniqiue(login))
+		{
+			PrintMessage(message::_Register_available);
+			UI::PrintMessage(message::_Register_confirm);
+			if (UI::UserAccept())
+			{
+				Account::Access access;
+				if (level == Account::Level::Client)
+					access = Account::Access::Pendig;
+				else
+					access = Account::Access::Approved;
+
+				Account new_account = make_account(login, password, access, level);
+				Account::vector_push(new_account);
+				done = true;
+				registered = true;
+
+				UI::PrintMessage(message::_Register_success);
+			}
+			else
+			{
+				UI::PrintMessage(message::_Register_fail);
+				UI::PrintMessage(message::_Register_back);
+				if (!UI::UserAccept()) done = true;
+			}
+
+		}
+		else
+		{
+			UI::PrintMessage(message::_Register_unavailable);
+			UI::PrintMessage(message::_Register_back);
+			if (!UI::UserAccept()) done = true;
+		}
+
+	} while (!done);
+	UI::WaitTillEnter();
+	ClearScreen();
 
 }
 
-void UI::Register()
-{
 
+void UI::Main_Super(std::shared_ptr<Account> account_ptr)
+{
+	ClearScreen();
+	UI::PrintHeader(message::_Super_header);
+	UI::WaitTillEnter();
+}
+void UI::Main_Admin(std::shared_ptr<Account> account_ptr)
+{
+	ClearScreen();
+	UI::PrintHeader(message::_Admin_header);
+	UI::WaitTillEnter();
+}
+void UI::Main_Client(std::shared_ptr<Account> account_ptr)
+{
+	ClearScreen();
+	UI::PrintHeader(message::_Client_header);
+	UI::WaitTillEnter();
+}
+
+bool UI::UserAccept()
+{
+	PrintAccept();
+	PrintDecline();
+	char input;
+	do
+	{
+		input = _getch();
+		switch (input)
+		{
+		case CONSTANT::ENTER:
+			return true;
+		case CONSTANT::ESCAPE:
+			return false;
+		}
+
+	} while (true);
+}
+
+
+void UI::PrintAccept()
+{
+	ConsoleFormat::PrintCenteredLine(message::_accept, manip::green_bright);
+}
+
+void UI::PrintDecline()
+{
+	ConsoleFormat::PrintCenteredLine(message::_decline, manip::red_bright);
 }
 
 void UI::PrintHeader(const message::message& name)
 {
-	ConsoleFormat::PrintCenteredLine("", "", '*');
-	ConsoleFormat::PrintCenteredLine(name, "", '~');
-	ConsoleFormat::PrintCenteredLine("", "", '*');
+	ConsoleFormat::PrintCenteredLine("", manip::purple_bright, ':');
+	ConsoleFormat::PrintCenteredLine(name, manip::purple_bright, ':');
+	ConsoleFormat::PrintCenteredLine("", manip::purple_bright, ':');
 }
 
 void UI::PrintOption(const message::message& option)
@@ -93,7 +271,7 @@ void UI::PrintEsc()
 
 void UI::WaitTillEnter()
 {
-	ConsoleFormat::PrintCenteredNewLine("Нажмите ENTER, чтобы продолжить", manip::bg_green_bright, ':');
+	ConsoleFormat::PrintCenteredNewLine("Нажмите ENTER, чтобы продолжить", manip::green_bright, ':');
 	char input;
 	do
 	{
@@ -127,7 +305,7 @@ void OptionsInterface::update()
 	case CONSTANT::ENTER:
 		last_event = events::select;
 		break;
-	
+
 	case CONSTANT::ESCAPE:
 		last_event = events::back;
 		break;

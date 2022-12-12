@@ -408,7 +408,7 @@ std::string ConsoleFormat::StringBox(std::string str, unsigned boxWidth)
 
 size_t ConsoleFormat::offset(size_t console_width, size_t row_width, size_t rows)
 {
-	return (console_width - row_width) / 2;
+	return (console_width - row_width) / 2 + rows / 2;
 }
 
 void ClearScreen(COORD home)

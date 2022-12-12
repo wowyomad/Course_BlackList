@@ -215,6 +215,19 @@ std::shared_ptr<Account> Account::vector_get(size_t index)
 
 	return Account::vector[index];
 }
+
+std::shared_ptr<Account> Account::vector_get(std::string login)
+{
+	size_t i = 0;
+	for (const std::shared_ptr<Account> acc : vector)
+	{
+		if (acc->login == login)
+			return vector[i];
+		i++;
+	}
+	throw std::out_of_range("Такого пользователя нет в массиве");
+}
+
 void Account::vector_print_highlight(size_t highlight_index)
 {
 	size_t size = Account::vector.size();
@@ -334,7 +347,7 @@ FileStatus Account::GetFileStatus()
 	return FileStatus::Opened;
 }
 
-Account make_account(const std::string& login, const std::string& string_password, const Account::Access access,const Account::Level level)
+Account make_account(const std::string& login, const std::string& string_password, const Account::Access access, const Account::Level level)
 {
 	Password password = make_password(string_password);
 	std::string id = Account::GenerateId();

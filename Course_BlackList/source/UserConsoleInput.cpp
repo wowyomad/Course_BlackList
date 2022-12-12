@@ -1,6 +1,7 @@
 ﻿#include "UserConsoleInput.h"
 #include "Date.h"
 #include "PrintFormat.h"
+#include "common.h"
 
 #include <conio.h>
 #include <regex>
@@ -57,11 +58,13 @@ std::string InputPassword(unsigned min, unsigned max)
 				password.pop_back();
 			}
 		}
+		else if (ch == CONSTANT::KEY_ARROW)
+			ch = _getch();
 		else if (is_russian(ch))
 		{
-			std::cout << "\nОшибка. Введен русский символ!\n\n";
+			/*std::cout << "\nОшибка. Введен русский символ!\n\n";
 			password.clear();
-			failed = true;
+			failed = true;*/
 		}
 		else
 		{
@@ -118,17 +121,19 @@ std::string InputLogin(unsigned min, unsigned max)
 		{
 			continue;
 		}
+		else if (ch == CONSTANT::KEY_ARROW)
+			ch = _getch();
 		else if (is_english(ch) || isdigit(ch) || ch == '_')
 		{
 			printf("%c", ch);
 			login.push_back(ch);
 		}
-		else
+		/*else
 		{
 			std::cout << "\nНедопустимый символ\n\n";
 			failed = true;
 			login.clear();
-		}
+		}*/
 	} while (true);
 	std::cout << "\n\n";
 	return login;

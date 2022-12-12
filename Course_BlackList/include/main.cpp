@@ -210,14 +210,23 @@ int main()
 			Account::Level::Client
 			);
 		Account::vector_push(*acc);
-	}
+	}/*
 
-	Account::PrintVector_highlight(2);
+	Account::vector_print_highlight(1, 0, 5);
 
-	UI::PrintHeader("Тествое меню");
 	UI::PrintOption("1.Привет");
 	UI::PrintOption_highlight("2.Пока");
 	UI::PrintOption("3.Gaeeeyy");
 
-	UI::WaitTillEnter();
+	UI::WaitTillEnter();*/
+
+	Account acc;
+	acc = make_account_admin("boba", "1234");
+	Account::vector_push(acc);
+	acc = make_account_client("joja", "1234");
+	Account::vector_push(acc);
+	acc = make_account_client_approved("bins", "1234");
+	Account::vector_push(acc);
+
+	Account::vector_print_highlight(-1);
 }

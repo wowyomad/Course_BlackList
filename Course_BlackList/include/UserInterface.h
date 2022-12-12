@@ -3,6 +3,14 @@
 
 #include "Deposit.h"
 
+namespace message
+{
+	using message = const char[];
+
+	static message hello = "Добро пожаловать в ад";
+	
+}
+
 namespace UI
 {
 	void Menu_Main();

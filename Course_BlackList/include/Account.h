@@ -52,7 +52,6 @@ public:
 	static std::string TopRow_num();
 	static std::string TopRow();
 
-	static void PrintVector_highlight(const size_t index);
 
 	Account();
 	Account(const std::string& login,
@@ -69,6 +68,7 @@ public:
 	void setLogin(std::string&& login) { this->login = login; }
 
 	inline std::string getId() const { return id; }
+	inline std::string getLogin() const { return login; }
 
 private:
 	static std::vector<std::shared_ptr<Account>> vector;
@@ -92,7 +92,13 @@ public:
 	static void vector_push(const Account& acc);
 	static std::shared_ptr<Account> vector_get(size_t index);
 	static void vector_print_highlight(size_t highlight_index);
-	static void vector_print_highlight(size_t highlight_index, size_t first, size_t last);
+	static void vector_print_highlight(size_t highlight_index, size_t first, size_t amount);
 
 	static size_t loginTaken(std::string& login);
+	static std::string GenerateId();
 };
+
+Account make_account(const std::string& login, const std::string& string_password, const Account::Access access, const Account::Level level);
+Account make_account_client(const std::string& login, const std::string& string_password);
+Account make_account_client_approved(const std::string& login, const std::string& string_password);
+Account make_account_admin(const std::string& login, const std::string& string_password);

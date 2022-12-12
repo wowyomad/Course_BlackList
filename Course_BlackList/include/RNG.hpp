@@ -36,6 +36,9 @@ namespace RNG
 	}
 
 
+
+
+
 	template <std::ranges::range _Arr, typename _Ty = uint64_t, size_t len = 16>
 	_Ty GenerateNum_withCheck(_Arr usedValues, size_t min = (std::numeric_limits<_Ty>::min)(), size_t max = MAX)
 		requires std::random_access_iterator<std::ranges::iterator_t<_Arr>>
@@ -58,7 +61,53 @@ namespace RNG
 		return num;
 	}
 
-	/*template <typename _Ty = uint64_t, size_t len = 16>
+	template<typename T>
+	concept ElementIterable = std::ranges::range<std::ranges::range_value_t<T>>;
+
+	template <typename _Arr, typename _Ty = uint64_t, size_t len = 16>
+		requires ElementIterable<_Arr>
+	_Ty GenerateNum_check(_Arr usedValues, size_t min = (std::numeric_limits<_Ty>::min)(), size_t max = MAX)
+	{
+		bool generated = false;
+		uint64_t num;
+		while (!generated)
+		{
+			num = GenerateNum<_Ty>();
+			generated = true;
+			for (auto& it : usedValues)
+			{
+				if (it == num)
+				{
+					generated = false;
+					break;
+				}
+			}
+		}
+		return num;
+	}
+
+	template <typename _Ty = uint64_t, size_t len = 16>
+	_Ty GenerateNum_check(std::vector<_Ty>usedValues, size_t min = (std::numeric_limits<_Ty>::min)(), size_t max = MAX)
+	{
+		bool generated = false;
+		uint64_t num;
+		while (!generated)
+		{
+			num = GenerateNum<_Ty>();
+			generated = true;
+			for (auto& it : usedValues)
+			{
+				if (it == num)
+				{
+					generated = false;
+					break;
+				}
+			}
+		}
+		return num;
+	}
+
+/*template <typename _Ty = uint64_t, size_t len = 16>
 	inline _Ty GenerateNum_withCheck(std::vector<_Ty> usedValues, size_t min = MIN, size_t max = MAX)
 	{
 		bool generated = false;

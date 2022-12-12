@@ -7,6 +7,7 @@
 
 #include "PrintFormat.h"
 #include "console_manip.h"
+#include "RNG.hpp"
 
 #include "FileHandle.hpp"
 
@@ -131,14 +132,22 @@ std::string Account::TopRow()
 
 Account& Account::operator=(const Account& other)
 {
-	Account acc(other);
-	return acc;
+	this->id = other.id;
+	this->login = other.login;
+	this->password = other.password;
+	this->access = other.access;
+	this->level = other.level;
+	return *this;
 }
 
 Account& Account::operator=(const Account&& other)
 {
-	Account acc(other);
-	return acc;
+	this->id = std::move(other.id);
+	this->login = std::move(other.login);
+	this->password = std::move(other.password);
+	this->access = std::move(other.access);
+	this->level = std::move(other.level);
+	return *this;
 }
 
 std::string Account::InfoRow(const int& count) const
@@ -189,23 +198,6 @@ std::string Account::InfoRow_highlight(const int& count) const
 	return info_row;
 }
 
-void Account::PrintVector_highlight(const size_t index)
-{
-	std::cout << Account::TopRow_num();
-
-	std::vector<std::string> row;
-	size_t i = 1;
-	for (auto& acc : vector)
-	{
-		if (i - 1 == index)
-			std::cout << acc->InfoRow_highlight(i);
-		else
-			std::cout << acc->InfoRow(i);
-		i++;
-	}
-}
-
-
 std::shared_ptr<Account> Account::vector_get(size_t index)
 {
 	if (index >= Account::vector.size())
@@ -221,9 +213,17 @@ void Account::vector_print_highlight(size_t highlight_index)
 	vector_print_highlight(highlight_index, 0, size);
 }
 
-void Account::vector_print_highlight(size_t highlight_index, size_t first, size_t last)
+void Account::vector_print_highlight(size_t highlight_index, size_t first, size_t amount)
 {
 	std::cout << Account::TopRow_num();
+
+	if (first < 0 or first >= vector.size())
+		throw std::out_of_range("fdsffdf");
+
+	if (amount <= 0 or (first + amount) > vector.size())
+		throw std::out_of_range("123213");
+
+	size_t last = first + amount;
 
 	for (size_t i = first; i < last; i++)
 	{
@@ -238,6 +238,16 @@ void Account::vector_print_highlight(size_t highlight_index, size_t first, size_
 	}
 }
 
+std::string Account::GenerateId()
+{
+	std::vector<std::size_t>taken_ids(vector.size());
+	for (size_t i = 0; i < vector.size(); i++)
+	{
+		taken_ids[i] = static_cast<size_t>(std::atoll(vector[i]->id.c_str()));
+	}
+	std::string id = std::to_string(RNG::GenerateNum_check(taken_ids));
+	return id;
+}
 void Account::CreateNewFile()
 {
 	std::ofstream file(PATH::Accounts);
@@ -306,4 +316,26 @@ void Account::RemoveUser(const size_t index)
 FileStatus Account::GetFileStatus()
 {
 	return FileStatus::Opened;
+}
+
+Account make_account(const std::string& login, const std::string& string_password, const Account::Access access,const Account::Level level)
+{
+	Password password = make_password(string_password);
+	std::string id = Account::GenerateId();
+	return Account(login, id, password, access, level);
+}
+
+Account make_account_client(const std::string& login, const std::string& string_password)
+{
+	return make_account(login, string_password, Account::Access::Pendig, Account::Level::Client);
+}
+
+Account make_account_client_approved(const std::string& login, const std::string& string_password)
+{
+	return make_account(login, string_password, Account::Access::Approved, Account::Level::Client);
+}
+
+Account make_account_admin(const std::string& login, const std::string& string_password)
+{
+	return make_account(login, string_password, Account::Access::Approved, Account::Level::Admin);
 }

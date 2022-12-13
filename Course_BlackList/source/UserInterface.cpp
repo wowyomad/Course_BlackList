@@ -317,8 +317,8 @@ void OptionsInterface::render()
 {
 	unsigned short i = 0;
 	if (to_update)
-	{
-		ClearScreen(home, CONSTANT::CONSOLE_HEIGHT);
+	{/*
+		ClearScreen(home, CONSTANT::CONSOLE_HEIGHT);*/
 		std::cout << manip::pos(0, 0);
 		UI::PrintHeader(header);
 		std::cout << manip::pos(home);

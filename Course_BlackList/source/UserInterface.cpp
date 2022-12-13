@@ -515,7 +515,7 @@ void TI_accounts::render()
 {
 	if (to_update)
 	{
-		ClearScreen(home);
+		ClearScreen(home, CONSTANT::CONSOLE_HEIGHT - home.Y - 4);
 		to_update = false;
 	}
 
@@ -533,7 +533,7 @@ void TI_accounts::render()
 		else
 			std::cout << accounts[i].second->InfoRow(i + 1);
 	}
-	std::cout << manip::pos(0, 52);
+	std::cout << manip::pos(0, CONSTANT::CONSOLE_HEIGHT - 4);
 	PrintPageCount();
 	UI::PrintEnter();
 	UI::PrintEsc();

@@ -35,6 +35,7 @@ namespace CONSTANT
 	const char ESCAPE = 27;
 
 	extern int CONSOLE_WIDTH;
+	extern int CONSOLE_HEIGHT;
 	extern int CELLS_MAX;
 	extern int CELL_WIDTH;
 	extern int ROW_WIDTH;

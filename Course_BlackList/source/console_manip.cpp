@@ -45,7 +45,9 @@ COORD Console::WindowSize()
 {
 	CONSOLE_SCREEN_BUFFER_INFO csbi;
 	GetConsoleScreenBufferInfo(handle, &csbi);
-	return csbi.dwSize;
+	short columns = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+	short rows = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
+	return COORD{ columns, rows };
 }
 
 COORD Console::GetWindowSize()

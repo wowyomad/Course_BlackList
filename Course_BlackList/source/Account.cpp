@@ -305,6 +305,12 @@ void Account::CopyVector(std::vector<std::shared_ptr<Account>>& destination)
 	}
 }
 
+const std::vector<std::shared_ptr<Account>> Account::vector_ref()
+{
+	return vector;
+}
+
+
 void Account::vector_push(const Account& acc)
 {
 	if (Account::vector.size() >= Account::BUFFER_SIZE)

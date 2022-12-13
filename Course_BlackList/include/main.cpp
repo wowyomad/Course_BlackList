@@ -53,9 +53,9 @@ void demo_main()
 	vec[9].level = Account::Level::Admin;
 
 	vec[9].setLogin("1321321312371eourhasfhlkdsflsjdfkldsjflksjdflsdjflksdfjsdfksdflksjdflksjdfsidu7f980u3209u4oi32jhl");
-	vec[2].setLogin("1321321312371eourhasfhlkdsflsjdfkldsjflksjdflsdjflksdfjsdfksdflksjdflksjdfsidu7f980u3209u4oi32jhl");
+	vec[2].setLogin("fsdfdsf123215r132e12edsdadfsdfdsfds32432532asd");
 
-	vec[5].setLogin("1321321312371eourhasfhlkdsflsjdfkldsjflksjdflsdjflksdfjsdfksdflksjdflksjdfsidu7f980u3209u4oi32jhl");
+	vec[5].setLogin("dsfdsfsf2131232134123");
 
 
 
@@ -197,6 +197,65 @@ int main()
 	OptionsInterface o(options, "demo main", home);
 
 	ClearScreen();
+
+	std::vector<Account> vec;
+	int size = 36;
+	for (size_t i = 0; i < size; i++)
+	{
+		std::string login = std::to_string((i + 1) * 123);
+		Password p = make_password(std::to_string(i));
+		Account acc(login, std::to_string(rand() % 1500), p, Account::Access::Approved, Account::Level::Admin);
+		acc.level = Account::Level::Client;
+		vec.push_back(acc);
+	}
+	vec[0].access = vec[2].access = vec[4].access = vec[6].access = vec[9].access = Account::Access::Denied;
+	vec[1].access = vec[3].access = Account::Access::Pendig;
+
+	vec[0].level = Account::Level::Super;
+	vec[4].level = Account::Level::Admin;
+	vec[9].level = Account::Level::Admin;
+
+	vec[9].setLogin("1321321312371eourhasfhlkdsflsjdfkldsjflksjdflsdjflksdfjsdfksdflksjdflksjdfsidu7f980u3209u4oi32jhl");
+	vec[2].setLogin("fsdfdsf123215r132e12edsdadfsdfdsfds32432532asd");
+
+	vec[5].setLogin("dsfdsfsf2131232134123");
+
+	for (auto& it : vec)
+		Account::vector_push(it);
+
+
+
+
+	size_t rows = 10;
+	COORD start_coords = { 0, 4 };
+	TI_accounts ti(Account::vector_ref(), rows, start_coords);
+
+	while (true)
+	{
+		ti.render();
+		ti.update();
+
+		event event = ti.event();
+
+		if (event == events::select)
+		{
+			ClearScreen();
+			std::cout << manip::pos(0, 10);
+			size_t pos = ti.index();
+			std::cout << Account::TopRow();
+			std::cout << Account::vector_get(pos)->InfoRow();
+
+			UI::WaitTillEnter();
+			ClearScreen();
+		}
+		else if (event == events::back)
+		{
+			ClearScreen();
+			UI::PrintMessage("Пока");
+			break;
+		}
+	}
+	exit(1);
 
 	while (true)
 	{

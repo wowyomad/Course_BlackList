@@ -126,14 +126,12 @@ protected:
 	const size_t rows;
 	bool to_update;
 
-
 public:
 	void update();
 	virtual void render() = 0;
-
 	virtual void refresh() = 0;
 	
-	size_t index() const;
+	virtual size_t index() const;
 	virtual event event() const;
 
 	TableInterface(COORD home, size_t rows);
@@ -151,12 +149,11 @@ class TI_accounts : public TableInterface
 	std::vector<std::pair<size_t, std::shared_ptr<Account>>> accounts;
 	const std::vector<std::shared_ptr<Account>> origin_ref;
 
-
 public:
-	TI_accounts(const std::vector<std::shared_ptr<Account>>& origin, const size_t rows, COORD home);
-
 	virtual void refresh() override;
 	virtual void render() override;
+	virtual size_t index() const override;
 
+	TI_accounts(const std::vector<std::shared_ptr<Account>>& origin, const size_t rows, COORD home);
 };
 

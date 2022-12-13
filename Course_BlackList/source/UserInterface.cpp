@@ -443,26 +443,26 @@ void TableInterface::move_right()
 
 void TableInterface::move_up()
 {
-	to_update = true;
 	if (pos > page * rows)
 		pos--;
 	else if (page > 0)
 	{
 		page--;
 		pos--;
+		to_update = true;
 	}
 	else to_update = false;
 }
 
 void TableInterface::move_down()
 {
-	to_update = true;
 	if (pos < max_pos)
 		pos++;
 	else if (page < max_page)
 	{
 		page++;
 		pos++;
+		to_update = true;
 	}
 	else to_update = false;
 }
@@ -482,25 +482,45 @@ void TI_accounts::refresh()
 	accounts.resize(size);
 	for (const std::shared_ptr<Account>& account : origin_ref)
 	{
-		accounts[i] = { i++, account };
+		accounts[i] = { i, account };
+		i++;
 	}
 	pos = 0;
 	page = 0;
-	max_page = size / rows + ((size % rows) > 0);
+	max_page = size / rows;
+}
+
+size_t TableInterface::index() const
+{
+	return pos;
+}
+
+size_t TI_accounts::index() const
+{
+	return accounts[pos].first;
 }
 
 void TI_accounts::render()
 {
-	max_pos = ((size - page * rows) >= rows) ? (page + 1) * rows : (page + 1) * rows - (rows - size % rows);
+	if (to_update)
+	{
+		ClearScreen(home);
+		to_update = false;
+	}
 
-	std::cout << manip::pos(home) << Account::TopRow();
+	if (size > (page + 1) * rows)
+		max_pos = (page + 1) * rows - 1;
+	else
+		max_pos = (page * rows) + size % 10 - 1;
 
-	for (size_t i = page * rows; i < max_pos; i++)
+	std::cout << manip::pos(home) << Account::TopRow_num();
+
+	for (size_t i = page * rows; i <= max_pos; i++)
 	{
 		if (i == pos)
-			std::cout << accounts[i].second->InfoRow_highlight();
+			std::cout << accounts[i].second->InfoRow_highlight(i + 1);
 		else
-			std::cout << accounts[i].second->InfoRow();
+			std::cout << accounts[i].second->InfoRow(i + 1);
 	}
 	UI::PrintEnter();
 	UI::PrintEsc();

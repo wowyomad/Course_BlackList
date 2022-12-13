@@ -92,7 +92,7 @@ public:
 	static std::shared_ptr<Account> GetAccount(std::string login);
 	static size_t GetUserIndex(std::string login);
 
-
+	static const std::vector<std::shared_ptr<Account>> vector_ref();
 	static void vector_push(const Account& acc);
 	static std::shared_ptr<Account> vector_get(size_t index);
 	static std::shared_ptr<Account> vector_get(std::string login);

@@ -515,6 +515,7 @@ void TI_accounts::render()
 {
 	if (to_update)
 	{
+		//Очистка области консоли. Благодаря этому смена страниц не вызывает мерцающего эффекта
 		ClearScreen(home, CONSTANT::CONSOLE_HEIGHT - home.Y - 4);
 		to_update = false;
 	}

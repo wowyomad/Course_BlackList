@@ -27,6 +27,7 @@ public:
 
 	static COORD GetWindowSize();
 	static COORD GetCursourPosition();
+	static void enable_ANSI();
 
 	void cMove(short off_x, short off_y);
 	

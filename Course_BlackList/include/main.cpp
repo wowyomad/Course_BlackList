@@ -106,7 +106,6 @@ int main()
 
 	ClearScreen();
 
-
 	while (true)
 	{
 		o.render();

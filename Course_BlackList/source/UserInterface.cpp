@@ -25,19 +25,16 @@ void UI::MainScreen()
 		message::_MainScreen_register
 	};
 
-	COORD home = { 0, 8 };
-	OptionsInterface o(options, home);
+	COORD home = { 0, 4 };
+	OptionsInterface o(options, message::_MainScreen_header, home);
 
 	do
 	{
-		std::cout << manip::pos(0, home.Y - 3);
-		UI::PrintHeader(message::_MainScreen_header);
 		o.render();
 		o.update();
 
 		if (o.event() == events::select)
 		{
-			ClearScreen();
 			switch (o.position())
 			{
 			case 0:
@@ -148,11 +145,8 @@ void UI::Register(const Account::Level level)
 			UI::PrintMessage(message::_Register_confirm);
 			if (UI::UserAccept())
 			{
-				Account::Access access;
-				if (level == Account::Level::Client)
-					access = Account::Access::Pendig;
-				else
-					access = Account::Access::Approved;
+				Account::Access access = Account::Access::Approved;
+				
 
 				Account new_account = make_account(login, password, access, level);
 				Account::vector_push(new_account);
@@ -177,7 +171,6 @@ void UI::Register(const Account::Level level)
 		}
 
 	} while (!done);
-	UI::WaitTillEnter();
 	ClearScreen();
 
 }
@@ -237,6 +230,7 @@ void UI::PrintHeader(const message::message& name)
 	ConsoleFormat::PrintCenteredLine("", manip::purple_bright, ':');
 	ConsoleFormat::PrintCenteredLine(name, manip::purple_bright, ':');
 	ConsoleFormat::PrintCenteredLine("", manip::purple_bright, ':');
+	UI::PrintLine();
 }
 
 void UI::PrintOption(const message::message& option)
@@ -303,10 +297,12 @@ void OptionsInterface::update()
 		break;
 
 	case CONSTANT::ENTER:
+		to_update = true;
 		last_event = events::select;
 		break;
 
 	case CONSTANT::ESCAPE:
+		to_update = true;
 		last_event = events::back;
 		break;
 	}
@@ -315,37 +311,55 @@ void OptionsInterface::update()
 void OptionsInterface::render()
 {
 	unsigned short i = 0;
-	std::cout << manip::pos(home);
-	for (const std::string& option : options)
+	if (to_update)
 	{
-		if (i == pos)
-			UI::PrintOption_highlight(option);
-		else
-			UI::PrintOption(option);
-		i++;
+		std::cout << manip::pos(0, 0);
+		UI::PrintHeader(header);
+		std::cout << manip::pos(home);
+		for (const std::string& option : options)
+		{
+			if (i == pos)
+				UI::PrintOption_highlight(option);
+			else
+				UI::PrintOption(option);
+			i++;
+		}
+		UI::PrintEnter();
+		UI::PrintEsc();
+		to_update = false;
 	}
-	UI::PrintEnter();
-	UI::PrintEsc();
 }
 
 OptionsInterface::OptionsInterface(const std::vector<std::string>& options, COORD home)
-	: options(options), pos(0), max_pos(options.size() - 1), last_event(events::none)
+	: options(options), pos(0), max_pos(options.size() - 1), last_event(events::none),
+	to_update(true)
 {
-	this->home = Console::GetCursourPosition();
+	this->home = home;
+}
 
+OptionsInterface::OptionsInterface(const std::vector<std::string>& options, const std::string& header, COORD home)
+	: options(options), pos(0), max_pos(options.size() - 1), last_event(events::none),
+	to_update(true), header(header)
+{
 	this->home = home;
 }
 
 void OptionsInterface::move_up()
 {
 	if (pos > 0)
+	{
+		to_update = true;
 		pos--;
+	}
 }
 
 void OptionsInterface::move_down()
 {
 	if (pos < max_pos)
+	{
+		to_update = true;
 		pos++;
+	}
 }
 
 event OptionsInterface::event() const

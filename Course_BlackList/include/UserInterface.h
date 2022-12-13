@@ -91,7 +91,9 @@ class OptionsInterface
 	unsigned short max_pos;
 	COORD home;
 	event last_event;
+	bool to_update;
 	std::vector<std::string> options;
+	std::string header;
 
 public:
 	void update();
@@ -102,7 +104,7 @@ public:
 	
 
 	OptionsInterface(const std::vector<std::string>& options, COORD home);
-
+	OptionsInterface(const std::vector<std::string>& options, const std::string& header, COORD home);
 private:
 	void move_up();
 	void move_down();

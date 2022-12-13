@@ -141,7 +141,7 @@ void demo_main()
 					std::string color = manip::cyan;
 					if (i == line)
 						color = manip::bg_cyan_bright;
-					ConsoleFormat::PrintCenteredNewLine("Это ты типо нажал ЕНТЕР и теперь должен быть переход к меню с функциями для выбранной ячейки, но пока ничего не готово. Нажми теперь ЕСКЕЙП " + std::to_string(i),
+					ConsoleFormat::PrintCenteredNewLine("Здесь ничего не работает. Стрлочками можно перемещатьс вверх-вниз, а ENTER вернет тебя назад" + std::to_string(i),
 						color, ':');
 				}
 

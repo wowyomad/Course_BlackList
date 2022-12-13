@@ -65,28 +65,6 @@ COORD Console::GetCursourPosition()
 	return csbi.dwCursorPosition;
 }
 
-void Console::enable_ANSI()
-{
-	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-	HANDLE csbi = CreateConsoleScreenBuffer(
-		GENERIC_READ | GENERIC_WRITE,
-		0,
-		nullptr,
-		CONSOLE_TEXTMODE_BUFFER, 
-		nullptr
-		);
-
-	DWORD dwMode = 0;
-	GetConsoleMode(csbi, &dwMode);
-	dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
-	SetConsoleMode(csbi, dwMode);
-
-	SetConsoleActiveScreenBuffer(csbi);
-
-
-	std::cout << manip::bg_green_bright << "сука блядская" << manip::reset;
-}
-
 
 void Console::cMove(short off_x, short off_y)
 {

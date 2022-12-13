@@ -317,6 +317,7 @@ void OptionsInterface::render()
 {
 	unsigned short i = 0;
 	if (to_update)
+	{
 	{/*
 		ClearScreen(home, CONSTANT::CONSOLE_HEIGHT);*/
 		std::cout << manip::pos(0, 0);
@@ -519,7 +520,7 @@ void TI_accounts::render()
 	if (to_update)
 	{
 		//Очистка области консоли. Благодаря этому смена страниц не вызывает мерцающего эффекта
-		ClearScreen(home, CONSTANT::CONSOLE_HEIGHT);
+		ClearScreen(home, CONSTANT::CONSOLE_HEIGHT - home.Y - 4);
 		to_update = false;
 	}
 
@@ -542,4 +543,5 @@ void TI_accounts::render()
 	PrintPageCount();
 	UI::PrintEnter();
 	UI::PrintEsc();
+
 }

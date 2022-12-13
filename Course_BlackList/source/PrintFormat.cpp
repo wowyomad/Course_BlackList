@@ -434,10 +434,14 @@ void ClearScreen(COORD home, unsigned short line_count)
 	GetConsoleScreenBufferInfo(handle, &csbi);
 	DWORD cellCount = csbi.dwSize.X * csbi.dwSize.Y - (csbi.dwSize.Y - line_count) * csbi.dwSize.X;
 
-
 	DWORD count;
 	FillConsoleOutputCharacter(handle, ' ', cellCount, home, &count);
 	FillConsoleOutputAttribute(handle, csbi.wAttributes, cellCount, home, &count);
 
 	SetConsoleCursorPosition(handle, home);
+}
+
+void ClearScreen()
+{
+	ClearScreen({ 0, 0 });
 }

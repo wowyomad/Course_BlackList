@@ -64,6 +64,7 @@ namespace UI
 	void PrintHeader(const message::message& name);
 	void PrintOption(const message::message& option);
 	void PrintMessage(const message::message& message);
+	void PrintString(const message::message& message);
 	void PrintOption_highlight(const message::message& option);
 	void PrintLine(const char character = '-');
 
@@ -142,6 +143,9 @@ private:
 	void move_right();
 	void move_up();
 	void move_down();
+
+protected:
+	void PrintPageCount();
 };
 
 class TI_accounts : public TableInterface

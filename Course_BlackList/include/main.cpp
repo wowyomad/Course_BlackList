@@ -223,9 +223,6 @@ int main()
 	for (auto& it : vec)
 		Account::vector_push(it);
 
-
-
-
 	size_t rows = 10;
 	COORD start_coords = { 0, 4 };
 	TI_accounts ti(Account::vector_ref(), rows, start_coords);

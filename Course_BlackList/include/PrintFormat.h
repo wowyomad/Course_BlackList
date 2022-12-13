@@ -51,6 +51,6 @@ namespace ConsoleFormat
 
 	size_t offset(size_t console_width, size_t row_width, size_t rows);
 }
-
-void ClearScreen(COORD home = { 0, 0 });
+void ClearScreen();
+void ClearScreen(COORD home);
 void ClearScreen(COORD home, unsigned short line_count);

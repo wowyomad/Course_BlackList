@@ -243,6 +243,11 @@ void UI::PrintMessage(const message::message& message)
 	ConsoleFormat::PrintCenteredLine(message, "", ':');
 }
 
+void UI::PrintString(const message::message& message)
+{
+	ConsoleFormat::PrintCenteredLine(message, "");
+}
+
 void UI::PrintOption_highlight(const message::message& option)
 {
 	ConsoleFormat::PrintCenteredNewLine(option, manip::bg_cyan_bright, ':');
@@ -467,6 +472,12 @@ void TableInterface::move_down()
 	else to_update = false;
 }
 
+void TableInterface::PrintPageCount()
+{
+	std::string pages = "Страница " + std::to_string(page + 1) + " из " + std::to_string(max_page + 1);
+	UI::PrintString(pages);
+}
+
 TI_accounts::TI_accounts(const std::vector<std::shared_ptr<Account>>& origin, const size_t rows, const COORD home)
 	: TableInterface(home, rows),
 	origin_ref(origin)
@@ -522,6 +533,8 @@ void TI_accounts::render()
 		else
 			std::cout << accounts[i].second->InfoRow(i + 1);
 	}
+	std::cout << manip::pos(0, 52);
+	PrintPageCount();
 	UI::PrintEnter();
 	UI::PrintEsc();
 

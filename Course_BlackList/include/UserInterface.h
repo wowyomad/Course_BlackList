@@ -115,23 +115,48 @@ class TableInterface
 {
 protected:
 	size_t pos;
+	size_t size;
 	size_t max_pos;
 
 	size_t page;
 	size_t max_page;
 
+	COORD home;
+	event last_event;
+	const size_t rows;
+	bool to_update;
+
+
 public:
-	virtual void update() = 0;
+	void update();
 	virtual void render() = 0;
+
+	virtual void refresh() = 0;
 	
 	size_t index() const;
+	virtual event event() const;
 
-	TableInterface();
+	TableInterface(COORD home, size_t rows);
+
+private:
+
+	void move_left();
+	void move_right();
+	void move_up();
+	void move_down();
 };
 
-class TableInterface_accounts : public TableInterface
+class TI_accounts : public TableInterface
 {
+	std::vector<std::pair<size_t, std::shared_ptr<Account>>> accounts;
+	const std::vector<std::shared_ptr<Account>> origin_ref;
 
+
+public:
+	TI_accounts(const std::vector<std::shared_ptr<Account>>& origin, const size_t rows, COORD home);
+
+	virtual void refresh() override;
+	virtual void render() override;
 
 };
 

@@ -367,7 +367,142 @@ event OptionsInterface::event() const
 	return last_event;
 }
 
+
+event TableInterface::event() const
+{
+	return last_event;
+}
+
 unsigned short OptionsInterface::position() const
 {
 	return pos;
+}
+
+void TableInterface::update()
+{
+	last_event = events::none;
+	char input = _getch();
+
+	switch (input)
+	{
+	case CONSTANT::KEY_ARROW:
+		input = _getch();
+		switch (input)
+		{
+		case CONSTANT::KEY_ARROW_UP:
+			move_up();
+			break;
+		case CONSTANT::KEY_ARROW_DOWN:
+			move_down();
+			break;
+		case CONSTANT::KEY_ARROW_LEFT:
+			move_left();
+			break;
+		case CONSTANT::KEY_ARROW_RIGHT:
+			move_right();
+			break;
+		}
+		break;
+
+	case CONSTANT::ENTER:
+		last_event = events::select;
+		break;
+
+	case CONSTANT::ESCAPE:
+		last_event = events::back;
+		break;
+	}
+}
+
+TableInterface::TableInterface(const COORD home, const size_t rows)
+	:home(home), rows(rows)
+{
+}
+
+void TableInterface::move_left()
+{
+	to_update = true;
+	if (page > 0)
+	{
+		page--;
+		pos = page * rows;
+	}
+	else to_update = false;
+}
+
+void TableInterface::move_right()
+{
+	to_update = true;
+	if (page < max_page)
+	{
+		page++;
+		pos = page * rows;
+	}
+	else to_update = false;
+}
+
+void TableInterface::move_up()
+{
+	to_update = true;
+	if (pos > page * rows)
+		pos--;
+	else if (page > 0)
+	{
+		page--;
+		pos--;
+	}
+	else to_update = false;
+}
+
+void TableInterface::move_down()
+{
+	to_update = true;
+	if (pos < max_pos)
+		pos++;
+	else if (page < max_page)
+	{
+		page++;
+		pos++;
+	}
+	else to_update = false;
+}
+
+TI_accounts::TI_accounts(const std::vector<std::shared_ptr<Account>>& origin, const size_t rows, const COORD home)
+	: TableInterface(home, rows),
+	origin_ref(origin)
+{
+	this->home = home;
+	TI_accounts::refresh();
+}
+
+void TI_accounts::refresh()
+{
+	size_t i = 0;
+	size = origin_ref.size();
+	accounts.resize(size);
+	for (const std::shared_ptr<Account>& account : origin_ref)
+	{
+		accounts[i] = { i++, account };
+	}
+	pos = 0;
+	page = 0;
+	max_page = size / rows + ((size % rows) > 0);
+}
+
+void TI_accounts::render()
+{
+	max_pos = ((size - page * rows) >= rows) ? (page + 1) * rows : (page + 1) * rows - (rows - size % rows);
+
+	std::cout << manip::pos(home) << Account::TopRow();
+
+	for (size_t i = page * rows; i < max_pos; i++)
+	{
+		if (i == pos)
+			std::cout << accounts[i].second->InfoRow_highlight();
+		else
+			std::cout << accounts[i].second->InfoRow();
+	}
+	UI::PrintEnter();
+	UI::PrintEsc();
+
 }

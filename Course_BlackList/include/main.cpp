@@ -190,12 +190,11 @@ int main()
 	CONSTANT::ROW_WIDTH = CONSTANT::CONSOLE_WIDTH * .8;
 	CONSTANT::BOX_WIDTH = CONSTANT::CONSOLE_WIDTH * 0.5;
 
-	UI::MainScreen();
 
 	COORD home = { 0, 20 };
 
 	std::vector<std::string> options{ "option1", "option2", "opion3", "opion4" };
-	OptionsInterface o(options, home);
+	OptionsInterface o(options, "demo main", home);
 
 	ClearScreen();
 
@@ -216,19 +215,25 @@ int main()
 				demo_main();
 				break;
 			case 1:
-				UI::PrintMessage("Опция два");
+				UI::MainScreen();
 				break;
 			case 2:
 				UI::PrintMessage("Опция пять");
+				UI::WaitTillEnter();
 				break;
 			case 3:
 				UI::PrintMessage("Опция четыре");
+				UI::WaitTillEnter();
 				break;
 			}
 			std::cout << manip::pos(0, 16);
-			UI::WaitTillEnter();
 			ClearScreen();
 
+		}
+		else if (event == events::back)
+		{
+			ClearScreen();
+			break;
 		}
 	}
 }

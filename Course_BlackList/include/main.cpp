@@ -66,7 +66,7 @@ void demo_accounts()
 
 		if (event == events::select)
 		{
-			ClearScreen();
+
 			std::cout << manip::pos(0, 10);
 			size_t pos = ti.index();
 			std::cout << Account::TopRow();

@@ -529,9 +529,6 @@ void TI_accounts::render()
 	else
 		max_pos = (page * rows) + size % 10 - 1;
 
-
-
-
 	std::cout << manip::pos(home) << Account::TopRow_num();
 
 	for (size_t i = page * rows; i <= max_pos; i++)

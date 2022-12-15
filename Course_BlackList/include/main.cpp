@@ -61,7 +61,7 @@ void demo_accounts()
 	{
 		ti.render();
 		ti.update();
-
+		
 		event event = ti.event();
 
 		if (event == events::select)

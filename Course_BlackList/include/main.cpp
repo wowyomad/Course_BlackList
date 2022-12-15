@@ -4,18 +4,14 @@
 #include "UserConsoleInput.h"
 #include "Date.h"
 
+#include "TableInterface.hpp"
+
 #include "Deposit.h"
 
-#include <array>
 #include <memory>
 
-#include <map>
-
-#include <unordered_map>
-
-#include <queue>
-
 #include "PrintFormat.h"
+
 
 int CONSTANT::CONSOLE_WIDTH;
 int CONSTANT::CONSOLE_HEIGHT;
@@ -25,6 +21,82 @@ int CONSTANT::ROW_WIDTH;
 int CONSTANT::BOX_WIDTH;
 
 #include "UserInterface.h"
+
+template <std::derived_from<Printable> _ItemType>
+void foo(std::vector<std::shared_ptr<_ItemType>> items)
+{
+	TableInterface<_ItemType> ti(items, 10, { 0, 4 });
+	while (true)
+	{
+		ti.render();
+		ti.update();
+	}
+}
+
+class B : public Printable
+{
+private:
+	std::string name;
+	unsigned long num;
+	std::string random_num;
+
+public:
+	B(const std::string& name, const unsigned num)
+		:name(name), num(num)
+	{
+		random_num = RNG::GenerateNum_str();
+	}
+public:
+	virtual void print_row_index(const size_t& index) const override
+	{
+		using namespace ConsoleFormat;
+		std::vector<std::string> top_row{
+			name,
+			std::to_string(num),
+			random_num,
+			std::to_string(index)
+		};
+		PrintRow(top_row, BORDER::BOTTOM);
+	}
+	virtual void print_row_index_highlight(const size_t& index) const override
+	{
+		using namespace ConsoleFormat;
+		std::vector<std::string> top_row{
+			name,
+			std::to_string(num),
+			random_num,
+			std::to_string(index)
+		};
+		PrintRow_highlight(top_row, BORDER::BOTTOM);
+	}
+	virtual void print_row(const size_t& index) const override
+	{
+		using namespace ConsoleFormat;
+		std::vector<std::string> top_row{
+			name,
+			std::to_string(num),
+			random_num,
+		};
+		PrintRow(top_row, BORDER::BOTTOM);
+	}
+	virtual void print_row_highlight(const size_t& index) const override
+	{
+		using namespace ConsoleFormat;
+		std::vector<std::string> top_row{
+			name,
+			std::to_string(num),
+			random_num
+		};
+		PrintRow_highlight(top_row, BORDER::BOTTOM);
+	}
+	virtual void print_topRow_index() const override
+	{
+		using namespace ConsoleFormat;
+		std::vector<std::string> top_row{ "Имя", "Число", "Случайное число", "Индекс" };
+		PrintRow(top_row, BORDER::BOTTOM);
+	}
+};
+
 
 void demo_accounts()
 {
@@ -43,23 +115,25 @@ void demo_accounts()
 
 	size_t rows_count = 10;
 	COORD start_coords = { 0, 4 };
-	TI_accounts ti(Account::vector_ref(), rows_count, start_coords);
-
+	TableInterface<Account> ti(Account::vector_ref(), rows_count, start_coords);
+	Account acc;
 	while (true)
 	{
 		ti.render();
 		ti.update();
-		
+
 		event event = ti.event();
 
 		if (event == events::select)
 		{
+			ClearScreen();
 			std::cout << manip::pos(0, 10);
 			size_t pos = ti.index();
-			std::cout << Account::TopRow();
-			std::cout << Account::vector_get(pos)->InfoRow();
+			acc.print_topRow_index();
+			std::cout << Account::get_account(pos)->row_index(pos + 1);
 
 			UI::WaitTillEnter();
+			ClearScreen();
 		}
 		else if (event == events::back)
 		{
@@ -70,7 +144,6 @@ void demo_accounts()
 	}
 }
 
-#include <set>
 
 //Чтобы консоль восприминала ANSI escape последовательность, нужно прописать в PowerShell команду: Set-ItemProperty HKCU:\Console VirtualTerminalLevel -Type DWORD 1
 int main()
@@ -78,11 +151,22 @@ int main()
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
 
+
 	Setup();
 	CONSTANT::CONSOLE_WIDTH = Console().WindowSize().X;
 	CONSTANT::CONSOLE_HEIGHT = Console().WindowSize().Y;
 	CONSTANT::ROW_WIDTH = CONSTANT::CONSOLE_WIDTH * .8;
 	CONSTANT::BOX_WIDTH = CONSTANT::CONSOLE_WIDTH * 0.5;
+
+	int length = 1000;
+	std::vector<std::shared_ptr<B>> vector;
+	for (size_t i = 0; i < length; i++)
+	{
+		B boba(std::to_string(i * 123), i);
+		vector.push_back(std::make_shared<B>(boba));
+	}
+
+	foo<B>(vector);
 
 
 	COORD home = { 0, 20 };

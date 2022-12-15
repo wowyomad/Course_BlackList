@@ -9,8 +9,10 @@
 #include "Password.h"
 #include "FileHandle.hpp"
 
+#include "Printable.h"
 
-class Account
+
+class Account : public Printable
 {
 public:
 	enum class Access
@@ -45,10 +47,16 @@ public:
 	Account& operator=(const Account&& other);
 
 
-	std::string InfoRow(const int& count = 0) const;
-	std::string InfoRow_highlight(const int& count = 0) const;
+	std::string row_index(const size_t& index) const;
 
-	static std::string TopRow_num();
+	std::string row_highlight_index(const size_t& index) const;
+
+	virtual void print_row(const size_t& index) const override;
+	virtual void print_row_index(const size_t& index) const override;
+	virtual void print_row_highlight(const size_t& index) const override;
+	virtual void print_row_index_highlight(const size_t& index) const override;
+
+	virtual void print_topRow_index() const override;
 	static std::string TopRow();
 
 
@@ -61,17 +69,16 @@ public:
 	Account(const Account& other) = default;
 	Account(Account&& other) noexcept;
 
-	void print();
-
-	void setId(const std::string& id) { this->id = id; }
-	void setLogin(const std::string& login) { this->login = login; }
+	void set_id(const std::string& id) { this->id = id; }
+	void set_login(const std::string& login) { this->login = login; }
 
 	bool UpdateLogin(const std::string& login);
 	void UpdatePassword(const std::string& password_string);
 
-	inline std::string getId() const { return id; }
-	inline std::string getLogin() const { return login; }
-	inline Password getPassword() const { return password; }
+	inline std::string get_id() const { return id; }
+	inline std::string get_login() const { return login; }
+	inline Password get_password() const { return password; }
+	//size_t get_index() const;
 
 
 private:
@@ -94,10 +101,11 @@ public:
 
 	static const std::vector<std::shared_ptr<Account>> vector_ref();
 	static void vector_push(const Account& acc);
-	static std::shared_ptr<Account> vector_get(size_t index);
-	static std::shared_ptr<Account> vector_get(std::string login);
-	static void vector_print_highlight(size_t highlight_index);
-	static void vector_print_highlight(size_t highlight_index, size_t first, size_t amount);
+	static std::shared_ptr<Account> get_account(size_t index);
+	static std::shared_ptr<Account> get_account(std::string login);
+
+	static void print_table_highlight(size_t highlight_index);
+	static void print_table_highlight(size_t highlight_index, size_t first, size_t amount);
 
 	static bool login_is_uniqiue(const std::string& login);
 	static std::string GenerateId();

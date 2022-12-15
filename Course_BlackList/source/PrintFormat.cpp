@@ -255,97 +255,15 @@ void ConsoleFormat::PrintRow(const std::vector<std::string>& stringVector,
 	const int cellWidth,
 	const int consoleWidth)
 {
-	if (cellWidth < 3) return;
-	unsigned maxLength = [stringVector]()->unsigned
-	{
-		unsigned maxLength = 0;
-		for (const auto& it : stringVector)
-		{
-			if (it.length() > maxLength)
-				maxLength = it.length();
-		}
-		return maxLength;
-	}();
-	int offset = (consoleWidth - cellWidth * stringVector.size()) / 2 - 3;
-	offset = offset > 0 ? offset : 0;
-	unsigned size = stringVector.size();
-	unsigned lines = maxLength % (cellWidth - 2) == 0 ? 0 : 1;
-	lines += maxLength / (cellWidth - 2);
-	unsigned line_length = cellWidth - 2;
+	std::cout << ConsoleFormat::RowString(stringVector, borders, cellWidth, consoleWidth);
+}
 
-	char downBorder = BORDER::BOTTOM & borders ? '_' : ' ';
-	char leftBorder = BORDER::LEFT & borders ? '|' : ' ';
-	char rightBorder = BORDER::RIGHT & borders ? '|' : ' ';
-	char innerSideBorder = BORDER::VERTICAL & borders ? '|' : ' ';
-
-
-	if (BORDER::TOP & borders)
-	{
-		std::cout << std::setw(offset) << std::setfill(' ') << ' ';
-		std::cout << ' ';
-		for (int i = 0; i < stringVector.size(); i++)
-		{
-			std::cout << std::setw(cellWidth - 1) << std::setfill('_') << ' ';
-		}
-		std::cout << '\n';
-	}
-
-	std::cout << std::setw(offset) << std::setfill(' ') << ' ';
-	std::cout << leftBorder << std::setw(cellWidth - 1) << std::setfill(' ');
-	for (int i = 1; i < stringVector.size() - 1; i++)
-	{
-		std::cout << innerSideBorder << std::setw(cellWidth - 1) << std::setfill(' ');
-	}
-	if (stringVector.size() > 1)
-		std::cout << innerSideBorder;
-	std::cout << std::setw(cellWidth - 1) << std::setfill(' ') << rightBorder << '\n';
-
-	unsigned* index = new unsigned[size] { 0 };
-	for (int k = 0; k < lines; k++)
-	{
-		int m = 0;
-		std::cout << std::setw(offset) << std::setfill(' ') << ' ';
-		std::cout << leftBorder;
-		for (int m = 0; m < size; m++)
-
-		{
-			if (stringVector[m][index[m]] == ' ') index[m]++;
-
-			if (borders & BORDER::UNDERSCORE)
-				std::cout << manip::begin_underscore;
-
-
-			int j = 0;
-
-
-			while (j < line_length && index[m] < stringVector[m].length())
-			{
-				std::cout << stringVector[m][index[m]];
-				index[m]++;
-				j++;
-			}
-
-			if (borders & BORDER::UNDERSCORE)
-				std::cout << manip::end_underscore;
-
-			std::cout << std::setw(line_length - j + 1) << std::setfill(' ');
-			if (m == size - 1) std::cout << rightBorder;
-			else std::cout << innerSideBorder;
-		}
-		if (BORDER::RIGHT & borders)
-			printf("\b \b%c", rightBorder);
-		std::cout << '\n';
-	}
-	std::cout << std::setw(offset) << std::setfill(' ') << ' ';
-	std::cout << leftBorder << std::setw(cellWidth - 1) << std::setfill(downBorder);
-	for (int i = 1; i < size - 1; i++)
-	{
-		std::cout << innerSideBorder << std::setw(cellWidth - 1) << std::setfill(downBorder);
-	}
-	if (size > 1) std::cout << innerSideBorder;
-	std::cout << std::setw(cellWidth - 1) << std::setfill(downBorder) << rightBorder << '\n';
-
-	delete[] index;
+void ConsoleFormat::PrintRow_highlight(const std::vector<std::string>& stringVector,
+	const uint8_t borders,
+	const int cellWidth,
+	const int consoleWidth)
+{
+	std::cout << ConsoleFormat::RowString_highlight(stringVector, borders, cellWidth, consoleWidth);
 }
 
 void ConsoleFormat::PrintCenteredLine(std::string str, std::string format, const char fill, const unsigned int width)

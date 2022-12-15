@@ -32,6 +32,10 @@ namespace ConsoleFormat
 		const int cellWidth = CONSTANT::CELL_WIDTH,
 		const int consoleWidth = CONSTANT::CONSOLE_WIDTH);
 
+	void PrintRow_highlight(const std::vector<std::string>& stringVector,
+		const uint8_t borders,
+		const int cellWidth = CONSTANT::CELL_WIDTH,
+		const int consoleWidth = CONSTANT::CONSOLE_WIDTH);
 
 	void PrintRow_underscore(const std::vector<std::string>& stringVector,
 		const uint8_t borders,

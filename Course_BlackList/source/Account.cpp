@@ -16,14 +16,6 @@ size_t Account::MAX_VECTOR_SIZE;
 size_t Account::RESERVE_SIZE;
 size_t Account::BUFFER_SIZE;
 
-void Account::print()
-{
-	std::cout << "Логин\t" << login << '\n'
-		<< "id\t" << id << '\n'
-		<< "Доступ\t" << Access_toString(access) << '\n'
-		<< "Уровень\t" << Level_toString(level) << '\n'
-		<< password << '\n';
-}
 
 std::string Account::Access_toString(Account::Access access)
 {
@@ -111,7 +103,7 @@ void Account::UpdatePassword(const std::string& password_string)
 }
 
 
-std::string Account::TopRow_num()
+void Account::print_topRow_index() const
 {
 	using namespace ConsoleFormat;
 	std::vector<std::string> row;
@@ -122,7 +114,7 @@ std::string Account::TopRow_num()
 	row.emplace_back("Уровень");
 	row.emplace_back("Доступ");
 
-	return ConsoleFormat::RowString(row, BORDER::BOTTOM);
+	std::cout << ConsoleFormat::RowString(row, BORDER::BOTTOM);
 }
 
 std::string Account::TopRow()
@@ -137,8 +129,6 @@ std::string Account::TopRow()
 
 	return ConsoleFormat::RowString(row, BORDER::BOTTOM);
 }
-
-
 
 Account& Account::operator=(const Account& other)
 {
@@ -160,20 +150,13 @@ Account& Account::operator=(const Account&& other)
 	return *this;
 }
 
-std::string Account::InfoRow(const int& count) const
+std::string Account::row_index(const size_t& index) const
 {
 	using namespace ConsoleFormat;
 
 	std::vector <std::string> row;
-	if (count > 0)
-	{
-		row.reserve(5);
-		row.emplace_back(std::to_string(count));
-	}
-	else
-	{
-		row.reserve(4);
-	}
+	row.reserve(5);
+	row.emplace_back(std::to_string(index));
 	row.emplace_back(id);
 	row.emplace_back(login);
 	row.emplace_back(Account::Level_toString(level));
@@ -184,20 +167,13 @@ std::string Account::InfoRow(const int& count) const
 	return info_row;
 }
 
-std::string Account::InfoRow_highlight(const int& count) const
+std::string Account::row_highlight_index(const size_t& index) const
 {
 	using namespace ConsoleFormat;
 
 	std::vector <std::string> row;
-	if (count > 0)
-	{
-		row.reserve(5);
-		row.emplace_back(std::to_string(count));
-	}
-	else
-	{
-		row.reserve(4);
-	}
+	row.reserve(5);
+	row.emplace_back(std::to_string(index));
 	row.emplace_back(id);
 	row.emplace_back(login);
 	row.emplace_back(Account::Level_toString(level));
@@ -208,7 +184,27 @@ std::string Account::InfoRow_highlight(const int& count) const
 	return info_row;
 }
 
-std::shared_ptr<Account> Account::vector_get(size_t index)
+void Account::print_row(const size_t& index) const
+{
+	std::cout << row_index(index);
+}
+void Account::print_row_index(const size_t& index) const
+{
+	std::cout << row_index(index);
+
+}
+void Account::print_row_highlight(const size_t& index) const
+{
+	std::cout << row_highlight_index(index);
+
+}
+void Account::print_row_index_highlight(const size_t& index) const
+{
+	std::cout << row_highlight_index(index);
+
+}
+
+std::shared_ptr<Account> Account::get_account(size_t index)
 {
 	if (index >= Account::vector.size())
 		throw std::out_of_range("Индекс вне диапазона массива аккаунтов");
@@ -216,7 +212,7 @@ std::shared_ptr<Account> Account::vector_get(size_t index)
 	return Account::vector[index];
 }
 
-std::shared_ptr<Account> Account::vector_get(std::string login)
+std::shared_ptr<Account> Account::get_account(std::string login)
 {
 	size_t i = 0;
 	for (const std::shared_ptr<Account> acc : vector)
@@ -228,23 +224,37 @@ std::shared_ptr<Account> Account::vector_get(std::string login)
 	throw std::out_of_range("Такого пользователя нет в массиве");
 }
 
-void Account::vector_print_highlight(size_t highlight_index)
+//size_t Account::get_index() const
+//{
+//	auto it = std::find(vector.begin(), vector.end(),
+//		[this](std::shared_ptr<Account>& acc) -> bool
+//		{
+//			return this->get_login() == acc->get_login();
+//		});
+//	if (it != vector.end())
+//		return it - vector.begin();
+//	else throw std::invalid_argument("Че-то не в получении индекса");
+//}
+
+
+void Account::print_table_highlight(size_t highlight_index)
 {
 	size_t size = Account::vector.size();
 	if (size <= 0) return;
 
-	vector_print_highlight(highlight_index, 0, size);
+	print_table_highlight(highlight_index, 0, size);
 }
 
-void Account::vector_print_highlight(size_t highlight_index, size_t first, size_t amount)
+void Account::print_table_highlight(size_t highlight_index, size_t first, size_t amount)
 {
-	std::cout << Account::TopRow_num();
+	Account acc;
+	acc.print_topRow_index();
 
 	if (first < 0 or first >= vector.size())
-		throw std::out_of_range("fdsffdf");
+		throw std::out_of_range("123");
 
 	if (amount <= 0 or (first + amount) > vector.size())
-		throw std::out_of_range("123213");
+		throw std::out_of_range("1234");
 
 	size_t last = first + amount;
 
@@ -252,11 +262,11 @@ void Account::vector_print_highlight(size_t highlight_index, size_t first, size_
 	{
 		if (i == highlight_index)
 		{
-			std::cout << Account::vector[i]->InfoRow_highlight(i + 1);
+			std::cout << Account::vector[i]->row_highlight_index(i + 1);
 		}
 		else
 		{
-			std::cout << Account::vector[i]->InfoRow(i + 1);
+			std::cout << Account::vector[i]->row_index(i + 1);
 		}
 	}
 }

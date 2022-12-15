@@ -30,6 +30,9 @@ void foo(std::vector<std::shared_ptr<_ItemType>> items)
 	{
 		ti.render();
 		ti.update();
+
+		if (ti.event() == events::back)
+			break;
 	}
 }
 
@@ -171,7 +174,7 @@ int main()
 
 	COORD home = { 0, 20 };
 
-	std::vector<std::string> options{ "option1", "option2", "opion3", "opion4" };
+	std::vector<std::string> options{ "option1", "option2", "option3", "option4" };
 	OptionsInterface o(options, "demo main", home);
 
 	ClearScreen();

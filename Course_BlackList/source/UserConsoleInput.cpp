@@ -26,7 +26,7 @@ std::string InputPassword(unsigned min, unsigned max)
 
 	std::string password;
 
-	char ch = 0;
+	unsigned char ch = 0;
 
 	bool failed = true;
 
@@ -80,7 +80,7 @@ std::string InputLogin(unsigned min, unsigned max)
 {
 	std::string login;
 	std::cout << "Логин может содеражать символы английского алфавита, цифры и нижнее подчервкивание.\n";
-	char ch = 0;
+	unsigned char ch = 0;
 	bool failed = true;
 	do
 	{
@@ -113,7 +113,7 @@ std::string InputLogin(unsigned min, unsigned max)
 		{
 			if (login.length() > 0)
 			{
-				printf("\b \b");
+				std::cout << "\b \b";
 				login.pop_back();
 			}
 		}
@@ -125,7 +125,7 @@ std::string InputLogin(unsigned min, unsigned max)
 			ch = _getch();
 		else if (is_english(ch) || isdigit(ch) || ch == '_')
 		{
-			printf("%c", ch);
+			std::cout << ch;
 			login.push_back(ch);
 		}
 		/*else

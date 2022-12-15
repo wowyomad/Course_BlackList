@@ -317,6 +317,7 @@ void OptionsInterface::render()
 {
 	unsigned short i = 0;
 	if (to_update)
+	{
 	{/*
 		ClearScreen(home, CONSTANT::CONSOLE_HEIGHT);*/
 		std::cout << manip::pos(0, 0);
@@ -518,7 +519,7 @@ void TI_accounts::render()
 	if (to_update)
 	{
 		//Очистка области консоли. Благодаря этому смена страниц не вызывает мерцающего эффекта
-		ClearScreen(home, CONSTANT::CONSOLE_HEIGHT);
+		ClearScreen(home, CONSTANT::CONSOLE_HEIGHT - home.Y - 4);
 		to_update = false;
 	}
 
@@ -527,8 +528,6 @@ void TI_accounts::render()
 	else
 		max_pos = (page * rows) + size % 10 - 1;
 
-	std::cout << manip::pos(0, 0);
-	UI::PrintHeader("Список аккаунтов");
 	std::cout << manip::pos(home) << Account::TopRow_num();
 
 	for (size_t i = page * rows; i <= max_pos; i++)
@@ -542,4 +541,5 @@ void TI_accounts::render()
 	PrintPageCount();
 	UI::PrintEnter();
 	UI::PrintEsc();
+
 }

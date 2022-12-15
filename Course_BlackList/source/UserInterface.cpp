@@ -529,7 +529,9 @@ void TI_accounts::render()
 	else
 		max_pos = (page * rows) + size % 10 - 1;
 
-	UI::PrintHeader("Список аккаунтов");
+
+
+
 	std::cout << manip::pos(home) << Account::TopRow_num();
 
 	for (size_t i = page * rows; i <= max_pos; i++)

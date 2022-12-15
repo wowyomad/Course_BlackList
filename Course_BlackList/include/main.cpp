@@ -40,11 +40,16 @@ class B : public Printable
 {
 private:
 	std::string name;
-	unsigned long num;
+	float num;
 	std::string random_num;
+	static const unsigned format = !(
+		ConsoleFormat::BORDER::LEFT |
+		ConsoleFormat::BORDER::RIGHT |
+		ConsoleFormat::BORDER::BOTTOM |
+		ConsoleFormat::BORDER::VERTICAL);
 
 public:
-	B(const std::string& name, const unsigned num)
+	B(const std::string& name, const float num)
 		:name(name), num(num)
 	{
 		random_num = RNG::GenerateNum_str();
@@ -59,7 +64,7 @@ public:
 			random_num,
 			std::to_string(index)
 		};
-		PrintRow(top_row, BORDER::BOTTOM);
+		PrintRow(top_row, format);
 	}
 	virtual void print_row_index_highlight(const size_t& index) const override
 	{
@@ -70,7 +75,7 @@ public:
 			random_num,
 			std::to_string(index)
 		};
-		PrintRow_highlight(top_row, BORDER::BOTTOM);
+		PrintRow_highlight(top_row, format);
 	}
 	virtual void print_row(const size_t& index) const override
 	{
@@ -80,7 +85,7 @@ public:
 			std::to_string(num),
 			random_num,
 		};
-		PrintRow(top_row, BORDER::BOTTOM);
+		PrintRow(top_row, format);
 	}
 	virtual void print_row_highlight(const size_t& index) const override
 	{
@@ -90,7 +95,7 @@ public:
 			std::to_string(num),
 			random_num
 		};
-		PrintRow_highlight(top_row, BORDER::BOTTOM);
+		PrintRow_highlight(top_row, format);
 	}
 	virtual void print_topRow_index() const override
 	{
@@ -165,7 +170,7 @@ int main()
 	std::vector<std::shared_ptr<B>> vector;
 	for (size_t i = 0; i < length; i++)
 	{
-		B boba(std::to_string(i * 123), i);
+		B boba(std::to_string(i * 123), 1.0f / (rand() % 100 + 1));
 		vector.push_back(std::make_shared<B>(boba));
 	}
 

@@ -10,6 +10,7 @@
 #include "RNG.hpp"
 
 #include "FileHandle.hpp"
+#include "Account.h"
 
 std::vector<std::shared_ptr<Account>> Account::vector;
 size_t Account::MAX_VECTOR_SIZE;
@@ -356,6 +357,14 @@ bool Account::login_is_uniqiue(const std::string& login)
 		if (acc->login == login)
 			return false;
 	return true;
+}
+
+bool Account::super_user_present()
+{
+	for (const std::shared_ptr<Account>& acc : vector)
+		if (acc->level == Level::Super) return true;
+
+	return false;
 }
 
 FileStatus Account::GetFileStatus()

@@ -1,6 +1,8 @@
 #include "TableInterface.hpp"
+#include "UserInterface.h"
 
 #include <conio.h>
+#include <iomanip>
 
 void OptionsInterface::update()
 {
@@ -99,4 +101,91 @@ event OptionsInterface::event() const
 unsigned short OptionsInterface::position() const
 {
 	return pos;
+}
+
+void UI::PrintHeader(const message::msg& name)
+{
+	ConsoleFormat::PrintCenteredLine("", manip::purple_bright, ':');
+	ConsoleFormat::PrintCenteredLine(name, manip::purple_bright, ':');
+	ConsoleFormat::PrintCenteredLine("", manip::purple_bright, ':');
+	PrintLine();
+}
+
+void UI::PrintOption(const message::msg& option)
+{
+	ConsoleFormat::PrintCenteredNewLine(option, manip::cyan, ':');
+}
+
+void UI::PrintMessage(const message::msg& message)
+{
+	ConsoleFormat::PrintCenteredLine(message, "", ':');
+}
+
+void UI::PrintString(const message::msg& message)
+{
+	ConsoleFormat::PrintCenteredLine(message, "");
+}
+
+void UI::PrintOption_highlight(const message::msg& option)
+{
+	ConsoleFormat::PrintCenteredNewLine(option, manip::bg_cyan_bright, ':');
+}
+
+void UI::PrintLine(const char character)
+{
+	std::cout << std::setfill(character) << std::setw(CONSTANT::CONSOLE_WIDTH) << '\n';
+}
+
+
+bool UI::UserAccept()
+{
+	UI::PrintAccept();
+	UI::PrintDecline();
+	char input;
+	do
+	{
+		input = _getch();
+		switch (input)
+		{
+		case CONSTANT::ENTER:
+			return true;
+		case CONSTANT::ESCAPE:
+			return false;
+		}
+
+	} while (true);
+}
+
+
+void UI::PrintAccept()
+{
+	ConsoleFormat::PrintCenteredLine(message::_accept, manip::green_bright);
+}
+
+void UI::PrintDecline()
+{
+	ConsoleFormat::PrintCenteredLine(message::_decline, manip::red_bright);
+}
+
+
+
+void UI::PrintEnter()
+{
+	ConsoleFormat::PrintCenteredLine(message::_select, manip::green_bright);
+}
+
+void UI::PrintEsc()
+{
+	ConsoleFormat::PrintCenteredLine(message::_back, manip::red_bright);
+}
+
+void UI::WaitTillEnter()
+{
+	ConsoleFormat::PrintCenteredNewLine("Нажмите ENTER, чтобы продолжить", manip::green_bright, ':');
+	char input;
+	do
+	{
+		input = _getch();
+
+	} while (input != CONSTANT::ENTER);
 }

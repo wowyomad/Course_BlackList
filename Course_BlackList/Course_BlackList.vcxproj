@@ -193,6 +193,7 @@
     <ClInclude Include="include\Date.h" />
     <ClInclude Include="include\Deposit.h" />
     <ClInclude Include="include\FileHandle.hpp" />
+    <ClInclude Include="include\messages.h" />
     <ClInclude Include="include\Money.hpp" />
     <ClInclude Include="include\Password.h" />
     <ClInclude Include="include\Printable.h" />

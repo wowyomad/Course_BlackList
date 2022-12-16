@@ -63,6 +63,9 @@
     <ClInclude Include="include\Printable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\messages.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="include\main.cpp">

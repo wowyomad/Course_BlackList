@@ -6,22 +6,26 @@
 
 #include "Account.h"
 #include "UserConsoleInput.h"
-
 #include "TableInterface.hpp"
 
-void UI::HelloScreen()
+#include "messages.h"
+
+
+void UIW::HelloScreen()
 {
 	ClearScreen();
 
-	PrintHeader(message::_HelloScreen_header);
+	UI::PrintHeader(message::_HelloScreen_header);
 
 	UI::WaitTillEnter();
 
-	UI::MainScreen();
+	UIW::MainScreen();
 }
 
-void UI::MainScreen()
+void UIW::MainScreen()
 {
+	Account::ReadFile();
+
 	std::vector<std::string>options{
 		message::_MainScreen_login,
 		message::_MainScreen_register
@@ -29,6 +33,17 @@ void UI::MainScreen()
 
 	COORD home = { 0, 4 };
 	OptionsInterface o(options, message::_MainScreen_header, home);
+
+	//Account::ReadFile();
+
+	while (!Account::super_user_present())
+	{
+		UI::PrintMessage(message::_MainScreen_no_super_user);
+		UI::PrintMessage(message::_MainScreen_register_as_super);
+		UI::WaitTillEnter();
+		UIW::Register(Account::Level::Super);
+	}
+
 
 	do
 	{
@@ -40,10 +55,10 @@ void UI::MainScreen()
 			switch (o.position())
 			{
 			case 0:
-				UI::Login();
+				UIW::Login();
 				break;
 			case 1:
-				UI::Register(Account::Level::Client);
+				UIW::Register(Account::Level::Client);
 				break;
 			}
 		}
@@ -56,7 +71,7 @@ void UI::MainScreen()
 	Account::WriteFile();
 }
 
-void UI::Login()
+void UIW::Login()
 {
 	bool done = false;
 	bool logged = false;
@@ -66,7 +81,7 @@ void UI::Login()
 	do
 	{
 		ClearScreen();
-		PrintHeader(message::_Login_header);
+		UI::PrintHeader(message::_Login_header);
 
 		std::string login = InputLogin(CONSTANT::LOGIN_LEN_MIN, CONSTANT::LOGIN_LEN_MAX);
 		std::string password = InputPassword(CONSTANT::PASSWORD_LEN_MIN, CONSTANT::PASSWORD_LEN_MAX);
@@ -107,7 +122,7 @@ void UI::Login()
 		UI::PrintMessage(message::_Login_success);
 		void (*Main)(std::shared_ptr<Account>);
 
-		
+
 		switch (account.level)
 		{
 		case Account::Level::Super:
@@ -128,27 +143,29 @@ void UI::Login()
 	ClearScreen();
 }
 
-void UI::Register(const Account::Level level)
+void UIW::Register(const Account::Level level)
 {
+
 	bool done = false;
 	bool registered = false;
 
 	do
 	{
 		ClearScreen();
-		PrintHeader(message::_Register_header);
+
+		UI::PrintHeader(message::_Register_header);
 
 		std::string login = InputLogin(CONSTANT::LOGIN_LEN_MIN, CONSTANT::LOGIN_LEN_MAX);
 		std::string password = InputPassword(CONSTANT::PASSWORD_LEN_MIN, CONSTANT::PASSWORD_LEN_MAX);
 
 		if (Account::login_is_uniqiue(login))
 		{
-			PrintMessage(message::_Register_available);
+			UI::PrintMessage(message::_Register_available);
 			UI::PrintMessage(message::_Register_confirm);
 			if (UI::UserAccept())
 			{
 				Account::Access access = Account::Access::Approved;
-				
+
 
 				Account new_account = make_account(login, password, access, level);
 				Account::vector_push(new_account);
@@ -178,105 +195,113 @@ void UI::Register(const Account::Level level)
 }
 
 
-void UI::Main_Super(std::shared_ptr<Account> account_ptr)
+void UIW::Main_Super(std::shared_ptr<Account> account_ptr)
 {
 	ClearScreen();
-	UI::PrintHeader(message::_Super_header);
+	std::string header = message::_Super_header;
+
+	std::vector<std::string> options{ "Таблица аккаунтов", "Таблица депозитов" };
+	OptionsInterface oi(options, header, { 0, 8 });
+
+	while (true)
+	{
+		oi.render();
+		oi.update();
+
+		event event = oi.event();
+
+		if (event == events::select)
+		{
+			switch (oi.position())
+			{
+			case 0:
+				UIW::UserTable_Admin(account_ptr);
+				break;
+			case 1:
+				UI::PrintMessage("Это еще не работает");
+				break;
+			}
+		}
+		else if (event == events::back)
+		{
+			break;
+		}
+	}
+
 	UI::WaitTillEnter();
 }
-void UI::Main_Admin(std::shared_ptr<Account> account_ptr)
+void UIW::Main_Admin(std::shared_ptr<Account> account_ptr)
 {
 	ClearScreen();
-	UI::PrintHeader(message::_Admin_header);
-	UI::WaitTillEnter();
+	std::string header = message::_Admin_header;
+
+	std::vector<std::string> options{ "Таблица аккаунтов", "Таблица депозитов" };
+	OptionsInterface oi(options, header, { 0, 8 });
+
+	while (true)
+	{
+		oi.render();
+		oi.update();
+
+		event event = oi.event();
+
+		if (event == events::select)
+		{
+			ClearScreen({ 0, 8 });
+			switch (oi.position())
+			{
+			case 0:
+				UIW::UserTable_Admin(account_ptr);
+				break;
+			case 1:
+				UI::PrintMessage("Это еще не работает");
+				break;
+			}
+		}
+		else if (event == events::back)
+		{
+			break;
+		}
+	}
+	ClearScreen();
 }
-void UI::Main_Client(std::shared_ptr<Account> account_ptr)
+void UIW::Main_Client(std::shared_ptr<Account> account_ptr)
 {
 	ClearScreen();
 	UI::PrintHeader(message::_Client_header);
 	UI::WaitTillEnter();
 }
 
-bool UI::UserAccept()
+void UIW::UserTable_Admin(std::shared_ptr<Account> account_ptr)
 {
-	PrintAccept();
-	PrintDecline();
-	char input;
-	do
+	ClearScreen();
+
+	const COORD home = { 0, 0 };
+	const size_t rows = 10;
+	std::string header = "Список аккаунтов";
+
+
+	TableInterface<Account> ti(Account::vector_ref(), header, home, rows);
+
+	while (true)
 	{
-		input = _getch();
-		switch (input)
+		ti.render();
+		ti.update();
+
+		event event = ti.event();
+
+		if (event == events::select)
 		{
-		case CONSTANT::ENTER:
-			return true;
-		case CONSTANT::ESCAPE:
-			return false;
+
 		}
-
-	} while (true);
+		else if (event == events::back)
+		{
+			break;
+		}
+	}
+	ClearScreen();
 }
 
-
-void UI::PrintAccept()
+void UIW::UserTable_Super(std::shared_ptr<Account> account_ptr)
 {
-	ConsoleFormat::PrintCenteredLine(message::_accept, manip::green_bright);
-}
-
-void UI::PrintDecline()
-{
-	ConsoleFormat::PrintCenteredLine(message::_decline, manip::red_bright);
-}
-
-void UI::PrintHeader(const message::message& name)
-{
-	ConsoleFormat::PrintCenteredLine("", manip::purple_bright, ':');
-	ConsoleFormat::PrintCenteredLine(name, manip::purple_bright, ':');
-	ConsoleFormat::PrintCenteredLine("", manip::purple_bright, ':');
-	UI::PrintLine();
-}
-
-void UI::PrintOption(const message::message& option)
-{
-	ConsoleFormat::PrintCenteredNewLine(option, manip::cyan, ':');
-}
-
-void UI::PrintMessage(const message::message& message)
-{
-	ConsoleFormat::PrintCenteredLine(message, "", ':');
-}
-
-void UI::PrintString(const message::message& message)
-{
-	ConsoleFormat::PrintCenteredLine(message, "");
-}
-
-void UI::PrintOption_highlight(const message::message& option)
-{
-	ConsoleFormat::PrintCenteredNewLine(option, manip::bg_cyan_bright, ':');
-}
-
-void UI::PrintLine(const char character)
-{
-	std::cout << std::setfill(character) << std::setw(CONSTANT::CONSOLE_WIDTH) << '\n';
-}
-
-void UI::PrintEnter()
-{
-	ConsoleFormat::PrintCenteredLine(message::_select, manip::green_bright);
-}
-
-void UI::PrintEsc()
-{
-	ConsoleFormat::PrintCenteredLine(message::_back, manip::red_bright);
-}
-
-void UI::WaitTillEnter()
-{
-	ConsoleFormat::PrintCenteredNewLine("Нажмите ENTER, чтобы продолжить", manip::green_bright, ':');
-	char input;
-	do
-	{
-		input = _getch();
-
-	} while (input != CONSTANT::ENTER);
 }

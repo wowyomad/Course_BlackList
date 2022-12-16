@@ -108,6 +108,7 @@ public:
 	static void print_table_highlight(size_t highlight_index, size_t first, size_t amount);
 
 	static bool login_is_uniqiue(const std::string& login);
+	static bool super_user_present();
 	static std::string GenerateId();
 };
 

@@ -24,7 +24,7 @@ void Setup()
 	}
 	std::filesystem::current_path(FILES_PATH);
 
-	std::cout << current_path() << '\n';
+	//std::cout << current_path() << '\n';
 
 
 }

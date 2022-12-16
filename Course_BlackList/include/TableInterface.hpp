@@ -10,6 +10,28 @@
 #include <memory>
 #include <conio.h>
 
+#include "messages.h"
+
+
+namespace UI
+{
+	using namespace message;
+	void PrintEnter();
+	void PrintEsc();
+	void PrintAccept();
+	void PrintDecline();
+
+	bool UserAccept();
+	void WaitTillEnter();
+
+	void PrintHeader(const msg& name);
+	void PrintOption(const msg& option);
+	void PrintMessage(const msg& message);
+	void PrintString(const msg& message);
+	void PrintOption_highlight(const msg& option);
+	void PrintLine(const char character = '-');
+}
+
 
 using event = uint8_t;
 namespace events
@@ -45,7 +67,7 @@ private:
 
 };
 
-template <std::derived_from<Printable> _ItemType> 
+template <std::derived_from<Printable> _ItemType>
 class TableInterface
 {
 protected:
@@ -62,6 +84,9 @@ protected:
 	COORD home;
 	event last_event;
 	const size_t rows;
+
+	std::string header;
+
 	bool to_update;
 
 public:
@@ -105,16 +130,25 @@ public:
 		if (to_update)
 		{
 			//Очистка области консоли. Благодаря этому смена страниц не вызывает мерцающего эффекта
-			ClearScreen(home, CONSTANT::CONSOLE_HEIGHT - home.Y - 4);
+			ClearScreen(home, CONSTANT::CONSOLE_HEIGHT - home.Y);
 			to_update = false;
 		}
+
+		
+		if (!header.empty())
+		{
+			std::cout << manip::pos(home);
+			UI::PrintHeader(header);
+		}
+		else std::cout << manip::pos(0, 0);
+
+
 
 		if (size > (page + 1) * rows)
 			max_pos = (page + 1) * rows - 1;
 		else
 			max_pos = (page * rows) + size % 10 - 1;
 
-		std::cout << manip::pos(home);
 		items[0].second->print_topRow_index();
 
 		for (size_t i = page * rows; i <= max_pos; i++)
@@ -154,8 +188,15 @@ public:
 		return last_event;
 	}
 
-	TableInterface(const std::vector<std::shared_ptr<_ItemType>>& origin, const size_t rows, const COORD home)
+	TableInterface(const std::vector<std::shared_ptr<_ItemType>>& origin, const COORD home, const size_t rows)
 		: home(home), rows(rows), origin_ref(origin)
+	{
+		header = "";
+		TableInterface::refresh();
+	}
+
+	TableInterface(const std::vector<std::shared_ptr<_ItemType>>& origin, const std::string& header, const COORD home, const size_t rows)
+		: home(home), rows(rows), origin_ref(origin), header(header)
 	{
 		TableInterface::refresh();
 	}

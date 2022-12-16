@@ -149,7 +149,7 @@ public:
 		else
 			max_pos = (page * rows) + size % 10 - 1;
 
-		items[0].second->print_topRow_index();
+		_ItemType::print_TopRow_index();
 
 		for (size_t i = page * rows; i <= max_pos; i++)
 		{

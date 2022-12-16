@@ -57,6 +57,8 @@ public:
 	virtual void print_row_index_highlight(const size_t& index) const override;
 
 	virtual void print_topRow_index() const override;
+
+	static void print_TopRow_index();
 	static std::string TopRow();
 
 

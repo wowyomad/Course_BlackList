@@ -24,8 +24,13 @@ protected:
 
 public:
 
-	static void ReadFile();
-	static void WriteFile();
+	static bool ReadFile();
+	static bool WriteFile();
+	static FileStatus GetFileStatus();
+
+	void add_deposit(const ClientDeposit& deposit);
+
+	const std::vector<std::shared_ptr<ClientDeposit>> get_deposit_ref() const;
 
 	virtual void print_topRow_index() const override;
 	virtual void print_row(const size_t& index) const override;
@@ -37,6 +42,8 @@ public:
 	static void vector_push(const Client& acc);
 	static std::shared_ptr<Client> get_account(size_t index);
 	static std::shared_ptr<Client> get_account(std::string login);
+
+	static void RemoveUser(const size_t index);
 
 
 	Client() = default;

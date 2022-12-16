@@ -118,6 +118,21 @@ void Account::print_topRow_index() const
 	std::cout << ConsoleFormat::RowString(row, BORDER::BOTTOM);
 }
 
+static void print_TopRow_index()
+{
+	using namespace ConsoleFormat;
+	std::vector<std::string> row;
+	row.reserve(5);
+	row.emplace_back("Номер");
+	row.emplace_back("ID");
+	row.emplace_back("Логин");
+	row.emplace_back("Уровень");
+	row.emplace_back("Доступ");
+
+	std::cout << ConsoleFormat::RowString(row, BORDER::BOTTOM);
+}
+
+
 std::string Account::TopRow()
 {
 	using namespace ConsoleFormat;
@@ -324,7 +339,7 @@ const std::vector<std::shared_ptr<Account>> Account::vector_ref()
 
 void Account::vector_push(const Account& acc)
 {
-	if (Account::vector.size() >= Account::BUFFER_SIZE)
+	if (Account::vector.size() == Account::BUFFER_SIZE)
 		Account::vector.reserve(vector.size() + Account::RESERVE_SIZE);
 
 	std::shared_ptr<Account> new_account = std::make_shared<Account>(acc);

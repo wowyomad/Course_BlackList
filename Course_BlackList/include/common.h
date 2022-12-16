@@ -29,6 +29,8 @@ namespace common
 }
 namespace CONSTANT
 {
+	const size_t RESERVE_SIZE = 0x10000;
+
 	const char TAB = 9;
 	const char ENTER = 13;
 	const char BACKSPACE = 8;

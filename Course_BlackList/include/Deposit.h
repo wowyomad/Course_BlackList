@@ -25,6 +25,8 @@ protected:
 public:
 
 	virtual void print_topRow_index() const override;
+	static void print_TopRow_index();
+
 	virtual void print_row(const size_t& index) const override;
 	virtual void print_row_index(const size_t& index) const override;
 	virtual void print_row_highlight(const size_t& index) const override;
@@ -69,7 +71,7 @@ class ClientDeposit : public Printable
 	Money real;
 
 	float int_rate;
-	bool finihsed;
+	bool finished;
 
 public:
 	ClientDeposit(const std::string& title,
@@ -86,6 +88,8 @@ public:
 	ClientDeposit() = default;
 
 	virtual void print_topRow_index() const override;
+	static void print_TopRow_index();
+
 	virtual void print_row(const size_t& index) const override;
 	virtual void print_row_index(const size_t& index) const override;
 	virtual void print_row_highlight(const size_t& index) const override;

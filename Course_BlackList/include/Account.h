@@ -9,8 +9,16 @@
 #include "Password.h"
 #include "FileHandle.hpp"
 
+#include "BankUser.h"
+
 #include "Printable.h"
 
+enum class Level
+{
+	Client,
+	Admin,
+	Super
+};
 
 class Account : public Printable
 {
@@ -23,12 +31,6 @@ public:
 	};
 	static std::string Access_toString(Access acess);
 
-	enum class Level
-	{
-		Client,
-		Admin,
-		Super
-	};
 	static std::string Level_toString(Level level);
 
 protected:
@@ -62,7 +64,7 @@ public:
 	static std::string TopRow();
 
 
-	Account();
+	Account() = default;
 	Account(const std::string& login,
 		const std::string& id,
 		const Password& password,
@@ -97,8 +99,10 @@ public:
 
 	static void CopyVector(std::vector <std::shared_ptr<Account>>& dest);
 	static void RemoveUser(const size_t index);
-	static std::shared_ptr<Account> GetAccount(const int index);
+	static std::shared_ptr<Account> GetAccount(const size_t index);
+	std::shared_ptr< Client> GetClient();
 	static std::shared_ptr<Account> GetAccount(std::string login);
+	static void RemoveAccount(const size_t index);
 	static size_t GetUserIndex(std::string login);
 
 	static const std::vector<std::shared_ptr<Account>> vector_ref();
@@ -114,7 +118,9 @@ public:
 	static std::string GenerateId();
 };
 
-Account make_account(const std::string& login, const std::string& string_password, const Account::Access access, const Account::Level level);
+Account make_account(const std::string& login, const std::string& string_password, const Account::Access access, const Level level);
 Account make_account_client(const std::string& login, const std::string& string_password);
 Account make_account_client_approved(const std::string& login, const std::string& string_password);
 Account make_account_admin(const std::string& login, const std::string& string_password);
+
+Client make_from_account(const std::shared_ptr<Account>& acc);

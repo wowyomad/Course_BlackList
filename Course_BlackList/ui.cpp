@@ -1,4 +1,4 @@
-#include "UserInterface.h"
+#include "ui.h"
 
 #include <conio.h>
 #include <iomanip>
@@ -7,8 +7,11 @@
 #include "Account.h"
 #include "UserConsoleInput.h"
 #include "TableInterface.hpp"
-
+#include "PrintFormat.h"
 #include "messages.h"
+
+class Account;
+class Client;
 
 
 void UIW::HelloScreen()
@@ -25,6 +28,8 @@ void UIW::HelloScreen()
 void UIW::MainScreen()
 {
 	Account::ReadFile();
+	Deposit::ReadFile();
+	Client::ReadFile();
 
 	std::vector<std::string>options{
 		message::_MainScreen_login,
@@ -41,7 +46,7 @@ void UIW::MainScreen()
 		UI::PrintMessage(message::_MainScreen_no_super_user);
 		UI::PrintMessage(message::_MainScreen_register_as_super);
 		UI::WaitTillEnter();
-		UIW::Register(Account::Level::Super);
+		UIW::Register(Level::Super);
 	}
 
 
@@ -58,7 +63,7 @@ void UIW::MainScreen()
 				UIW::Login();
 				break;
 			case 1:
-				UIW::Register(Account::Level::Client);
+				UIW::Register(Level::Client);
 				break;
 			}
 		}
@@ -69,6 +74,8 @@ void UIW::MainScreen()
 	} while (true);
 
 	Account::WriteFile();
+	Deposit::WriteFile();
+	Client::WriteFile();
 }
 
 void UIW::Login()
@@ -125,13 +132,13 @@ void UIW::Login()
 
 		switch (account.level)
 		{
-		case Account::Level::Super:
+		case Level::Super:
 			Main = Main_Super;
 			break;
-		case Account::Level::Admin:
+		case Level::Admin:
 			Main = Main_Admin;
 			break;
-		case Account::Level::Client:
+		case Level::Client:
 			Main = Main_Client;
 			break;
 		default:
@@ -143,7 +150,7 @@ void UIW::Login()
 	ClearScreen();
 }
 
-void UIW::Register(const Account::Level level)
+void UIW::Register(const Level level)
 {
 
 	bool done = false;
@@ -254,7 +261,7 @@ void UIW::Main_Admin(std::shared_ptr<Account> account_ptr)
 				UIW::UserTable_Admin(account_ptr);
 				break;
 			case 1:
-				UI::PrintMessage("Это еще не работает");
+				UIW::DepositTable_Admin(account_ptr);
 				break;
 			}
 		}
@@ -268,8 +275,38 @@ void UIW::Main_Admin(std::shared_ptr<Account> account_ptr)
 void UIW::Main_Client(std::shared_ptr<Account> account_ptr)
 {
 	ClearScreen();
-	UI::PrintHeader(message::_Client_header);
-	UI::WaitTillEnter();
+	std::string header = message::_Client_header;
+
+	std::vector<std::string> options{ "Мои депозиты", "Настройки аккаунта" };
+
+	OptionsInterface oi(options, header, { 0, 8 });
+
+	while (true)
+	{
+		oi.render();
+		oi.update();
+
+		event event = oi.event();
+
+		if (event == events::select)
+		{
+			ClearScreen({ 0, 8 });
+			switch (oi.position())
+			{
+			case 0:
+				UIW::ClientDeposits_Client(account_ptr);
+				break;
+			case 1:
+				UIW::ClientOptions_Client(account_ptr);
+				break;
+			}
+		}
+		else if (event == events::back)
+		{
+			break;
+		}
+	}
+	ClearScreen();
 }
 
 void UIW::UserTable_Admin(std::shared_ptr<Account> account_ptr)
@@ -292,7 +329,7 @@ void UIW::UserTable_Admin(std::shared_ptr<Account> account_ptr)
 
 		if (event == events::select)
 		{
-
+			ClientOptions_Admin(Account::get_account(ti.index()));
 		}
 		else if (event == events::back)
 		{
@@ -304,4 +341,148 @@ void UIW::UserTable_Admin(std::shared_ptr<Account> account_ptr)
 
 void UIW::UserTable_Super(std::shared_ptr<Account> account_ptr)
 {
+	UserTable_Admin(account_ptr);
+}
+
+void UIW::DepositTable_Admin(std::shared_ptr<Account> account_ptr)
+{
+	ClearScreen();
+
+	std::string header = "Доступные вклады";
+	auto deposits = Deposit::vector_ref();
+
+	TableInterface<Deposit> ti(deposits, header, { 0, 0 }, 10);
+
+	while (ti.event() != events::back)
+	{
+		ti.render();
+		ti.update();
+
+		if (ti.event() == events::other)
+		{
+			UIW::NewDeposit_Admin(account_ptr);
+			ti.refresh();
+		}
+	}
+
+
+}
+
+
+void UIW::ClientDeposits_Client(std::shared_ptr<Account> account_ptr)
+{
+	ClearScreen();
+
+	std::string header = "Мои ввклады"; //message
+
+
+	std::vector<std::shared_ptr<ClientDeposit>> deposits = account_ptr->GetClient()->deposit_ref();
+
+	TableInterface<ClientDeposit> ti(deposits, header, { 0, 0 }, 10);
+
+	while (ti.event() != events::back)
+	{
+		ti.render();
+		ti.update();
+	}
+
+	ClearScreen();
+}
+
+void UIW::ClientDeposits_Admin(std::shared_ptr<Account> account_ptr)
+{
+	ClientDeposits_Client(account_ptr);
+}
+
+void UIW::ClientOptions_Admin(std::shared_ptr<Account> account_ptr)
+{
+	ClearScreen();
+	std::string header = message::_Client_header;
+
+	std::vector<std::string> options{ "Вклады", "Настройки аккаунта" };
+
+	OptionsInterface oi(options, header, { 0, 8 });
+
+	while (oi.event() != events::back)
+	{
+		oi.render();
+		oi.update();
+
+		event event = oi.event();
+
+		if (event == events::select)
+		{
+			ClearScreen({ 0, 8 });
+			switch (oi.position())
+			{
+			case 0:
+				UIW::ClientDeposits_Client(account_ptr);
+				break;
+			case 1:
+				UIW::ClientOptions_Admin(account_ptr);
+				break;
+			}
+		}
+	}
+	ClearScreen();
+}
+
+void UIW::ClientOptions_Client(std::shared_ptr<Account> account_ptr)
+{
+	ClearScreen();
+
+	std::string header = "Настройки аккаунта";
+	std::vector<std::string> opeions{ "Изменить логин", "Изменить пароль" };
+
+	OptionsInterface oi(opeions, header, { 0,8 });
+
+	while (oi.event() != events::back)
+	{
+		oi.render();
+		oi.update();
+
+		if (oi.event() == events::select)
+		{
+			ClearScreen({ 0, 8 });
+			switch (oi.position())
+			{
+			case 0:
+				UIW::UpdateLogin_any(account_ptr);
+				break;
+			case 1:
+				UIW::UpdatePassword_any(account_ptr);
+				break;
+			}
+		}
+	}
+}
+
+void UIW::RemoveAcccount_Admin(std::shared_ptr<Account> account_ptr)
+{
+	ClearScreen();
+}
+void UIW::RemoveAccount_Super(std::shared_ptr<Account> account_ptr)
+{
+	UIW::RemoveAcccount_Admin(account_ptr);
+}
+
+
+
+void UIW::AddDeposit_Client(std::shared_ptr<Account> account_ptr)
+{
+	ClearScreen();
+}
+void UIW::NewDeposit_Admin(std::shared_ptr<Account> account_ptr)
+{
+	ClearScreen();
+}
+
+
+void UIW::UpdatePassword_any(std::shared_ptr<Account> account_ptr)
+{
+	ClearScreen();
+}
+void UIW::UpdateLogin_any(std::shared_ptr<Account> account_ptr)
+{
+	ClearScreen();
 }

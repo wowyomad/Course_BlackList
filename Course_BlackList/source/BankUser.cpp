@@ -2,6 +2,14 @@
 
 #include "common.h"
 
+std::vector<std::shared_ptr<Client>> Client::vector;
+
+
+Client::Client(const std::string& name, const std::string& id)
+	:name(name), id(id), deposits({})
+{
+}
+
 Client::Client(const std::string& name,
 	const std::string& id,
 	const std::vector<std::shared_ptr<ClientDeposit>> deposits)
@@ -36,7 +44,9 @@ void Client::add_deposit(const ClientDeposit& deposit)
 	deposits.push_back(std::make_shared<ClientDeposit>(deposit));
 }
 
-const std::vector<std::shared_ptr<ClientDeposit>> Client::get_deposit_ref() const
+
+
+const std::vector<std::shared_ptr<ClientDeposit>> Client::deposit_ref() const
 {
 	return deposits;
 }
@@ -44,7 +54,31 @@ const std::vector<std::shared_ptr<ClientDeposit>> Client::get_deposit_ref() cons
 
 void Client::print_topRow_index() const
 {
+	using namespace ConsoleFormat;
 
+	std::vector<std::string> top_row{
+		"Номер",
+		"Имя",
+		"id",
+		"Кол-во вкладов"
+	};
+
+	PrintRow(top_row, BORDER::BOTTOM);
+
+}
+
+void Client::print_TopRow_index()
+{
+	using namespace ConsoleFormat;
+
+	std::vector<std::string> top_row{
+		"Номер",
+		"Имя",
+		"id",
+		"Кол-во вкладов"
+	};
+
+	PrintRow(top_row, BORDER::BOTTOM);
 }
 
 void Client::print_row(const size_t& index) const
@@ -53,6 +87,16 @@ void Client::print_row(const size_t& index) const
 }
 void Client::print_row_index(const size_t& index) const
 {
+	using namespace ConsoleFormat;
+
+	std::vector<std::string> row{
+		std::to_string(index),
+		name,
+		id,
+		std::to_string(deposits.size())
+	};
+
+	ConsoleFormat::PrintRow(row, BORDER::RIGHT | BORDER::LEFT | BORDER::VERTICAL | BORDER::BOTTOM);
 
 }
 void Client::print_row_highlight(const size_t& index) const
@@ -61,7 +105,16 @@ void Client::print_row_highlight(const size_t& index) const
 }
 void Client::print_row_index_highlight(const size_t& index) const
 {
+	using namespace ConsoleFormat;
 
+	std::vector<std::string> row{
+		std::to_string(index),
+		name,
+		id,
+		std::to_string(deposits.size())
+	};
+
+	ConsoleFormat::PrintRow_highlight(row, BORDER::RIGHT | BORDER::LEFT | BORDER::VERTICAL | BORDER::BOTTOM);
 }
 
 const std::vector<std::shared_ptr<Client>> Client::vector_ref()
@@ -92,7 +145,6 @@ std::shared_ptr<Client> Client::get_account(std::string login)
 void Client::RemoveUser(const size_t index)
 {
 	if (index > vector.size() - 1) throw "wtf index";
-
 	vector.erase(vector.begin() + index);
 }
 
@@ -114,6 +166,7 @@ std::fstream& operator>>(std::fstream& fs, Client& client)
 	fs.get();
 	size_t size;
 	fs.read((char*)&size, sizeof(size_t));
+	if (fs.eof()) return fs;
 	client.deposits.resize(size);
 	for (size_t i = 0; i < size; i++)
 	{
@@ -122,11 +175,4 @@ std::fstream& operator>>(std::fstream& fs, Client& client)
 		client.deposits[i] = std::make_shared<ClientDeposit>(deposit);
 	}
 	return fs;
-}
-
-Client Client::make_from_account(const std::shared_ptr<Account>& acc)
-{
-	std::vector<std::shared_ptr<ClientDeposit>> deposits;
-
-	return Client(acc->get_login(), acc->get_id(), deposits);
 }

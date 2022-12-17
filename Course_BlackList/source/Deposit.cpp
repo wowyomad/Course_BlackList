@@ -5,6 +5,29 @@
 
 #include "PrintFormat.h"
 
+std::vector<std::shared_ptr<Deposit>> Deposit::vector;
+
+bool Deposit::ReadFile()
+{
+	vector.clear();
+	vector.reserve(CONSTANT::RESERVE_SIZE);
+
+	if (GetFileStatus() == FileStatus::Opened)
+		return File::ReadFile(PATH::Bank, vector);
+
+	return false;
+}
+
+bool Deposit::WriteFile()
+{
+	return File::WriteToFile(PATH::Bank, vector);
+}
+
+FileStatus Deposit::GetFileStatus()
+{
+	return FileStatus();
+}
+
 void Deposit::print_topRow_index() const
 {
 
@@ -94,6 +117,25 @@ bool Deposit::operator==(const std::string& id)
 	return false;
 }
 
+void Deposit::vector_push(const Deposit& deposit)
+{
+	if (Deposit::vector.size() == CONSTANT::RESERVE_SIZE)
+		Deposit::vector.reserve(vector.size() + CONSTANT::RESERVE_SIZE);
+
+	std::shared_ptr<Deposit> new_deposit = std::make_shared<Deposit>(deposit);
+	Deposit::vector.emplace_back(new_deposit);
+}
+
+const std::vector<std::shared_ptr<Deposit>> Deposit::vector_ref()
+{
+	return vector;
+}
+
+Deposit Deposit::get_deposit(const size_t index)
+{
+	return *vector[index];
+}
+
 std::fstream& operator<<(std::fstream& fs, const Deposit& deposit)
 {
 	fs << deposit.title << ' ';
@@ -125,9 +167,9 @@ ClientDeposit::ClientDeposit(const std::string& title,
 	Money planned,
 	Money real,
 	const TimeDate date_start,
-	const TimeDate dast_end_planned,
+	const TimeDate date_end_planned,
 	const TimeDate date_end_real)
-	:id(id), int_rate(int_rate),
+	:title(title), id(id), int_rate(int_rate),
 	finished(finished),
 	invested(invested),
 	planned(planned),
@@ -136,7 +178,7 @@ ClientDeposit::ClientDeposit(const std::string& title,
 	date_end_planned(date_end_planned),
 	date_end_real(date_end_real)
 {
-
+	this->id;
 }
 
 void ClientDeposit::print_topRow_index() const
@@ -145,6 +187,7 @@ void ClientDeposit::print_topRow_index() const
 	
 	std::vector<std::string> top_row{
 		"Номер",
+		"Название",
 		"Ставка, %",
 		"Вклад, руб",
 		"К получению",
@@ -163,7 +206,7 @@ void ClientDeposit::print_TopRow_index()
 
 	std::vector<std::string> top_row{
 		"Номер",
-		"id",
+		"Название",
 		"Ставка, %",
 		"Вклад, руб",
 		"К получению",
@@ -184,7 +227,7 @@ void ClientDeposit::print_row_index(const size_t& index) const
 	using namespace ConsoleFormat;
 	std::vector<std::string> row {
 		std::to_string(index),
-		id,
+		title,
 		(std::stringstream() << std::fixed << std::setprecision(2) << int_rate).str(),
 		(std::stringstream() << std::fixed << std::setprecision(2) << invested).str(),
 		(std::stringstream() << std::fixed << std::setprecision(2) << planned).str(),
@@ -206,7 +249,7 @@ void ClientDeposit::print_row_index_highlight(const size_t& index) const
 	using namespace ConsoleFormat;
 	std::vector<std::string> row{
 		std::to_string(index),
-		id,
+		title,
 		(std::stringstream() << std::fixed << std::setprecision(2) << int_rate).str(),
 		(std::stringstream() << std::fixed << std::setprecision(2) << invested).str(),
 		(std::stringstream() << std::fixed << std::setprecision(2) << planned).str(),
@@ -214,6 +257,36 @@ void ClientDeposit::print_row_index_highlight(const size_t& index) const
 		date_end_planned.str_date()
 	};
 	ConsoleFormat::PrintRow_highlight(row, BORDER::RIGHT | BORDER::LEFT | BORDER::VERTICAL | BORDER::BOTTOM);
+}
+
+void ClientDeposit::finish_now()
+{
+}
+
+bool ClientDeposit::is_finished()
+{
+	return false;
+}
+
+ClientDeposit ClientDeposit::make_from_deposit(const Deposit& deposit, Money invesetment, unsigned days)
+{
+	Money planned = invesetment * (days / 365.0f) * deposit.int_rate;
+	tm current_time = TimeDate::current_time_tm();
+	TimeDate current_date = TimeDate(&current_time);
+	TimeDate date_planned = TimeDate(&current_time);
+	date_planned.add_days(days);
+	ClientDeposit cd(deposit.title,
+		deposit.id,
+		deposit.int_rate,
+		false,
+		invesetment,
+		planned,
+		planned,
+		current_date,
+		date_planned,
+		date_planned);
+
+	return cd;
 }
 
 Deposit make_deposit(const std::string& title, const float int_rate, const Money min, const Money max)

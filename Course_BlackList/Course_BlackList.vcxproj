@@ -202,7 +202,7 @@
     <ClInclude Include="include\Setup.hpp" />
     <ClInclude Include="include\TableInterface.hpp" />
     <ClInclude Include="include\UserConsoleInput.h" />
-    <ClInclude Include="include\UserInterface.h" />
+    <ClInclude Include="ui.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="include\main.cpp" />
@@ -215,7 +215,7 @@
     <ClCompile Include="source\PrintFormat.cpp" />
     <ClCompile Include="source\TableInterface.cpp" />
     <ClCompile Include="source\UserConsoleInput.cpp" />
-    <ClCompile Include="source\UserInterface.cpp" />
+    <ClCompile Include="ui.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

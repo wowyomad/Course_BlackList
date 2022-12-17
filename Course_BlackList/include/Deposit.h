@@ -5,8 +5,8 @@
 #include <fstream>
 
 #include "Printable.h"
-
 #include "TableInterface.hpp"
+#include "FileHandle.hpp"
 #include "Money.hpp"
 #include "RNG.hpp"
 #include "Date.h"
@@ -15,14 +15,20 @@ using Money = long long;
 
 class Deposit : public Printable
 {
-protected:
+public:
 	std::string title;
 	std::string id;
 	float int_rate;
 	Money deposit_min;
 	Money deposit_max;
 
+	static std::vector<std::shared_ptr<Deposit>> vector;
+
 public:
+
+	static bool ReadFile();
+	static bool WriteFile();
+	static FileStatus GetFileStatus();
 
 	virtual void print_topRow_index() const override;
 	static void print_TopRow_index();
@@ -38,6 +44,7 @@ public:
 		const Money min,
 		const Money max);
 
+	Deposit() = default;
 	Deposit(const Deposit& other) = default;
 	Deposit(Deposit&& other) = default;
 
@@ -50,6 +57,10 @@ public:
 
 	friend std::fstream& operator<<(std::fstream& fs, const Deposit& deposit);
 	friend std::fstream& operator>>(std::fstream& fs,  Deposit& deposit);
+
+	static void vector_push(const Deposit& deposit);
+	static const std::vector<std::shared_ptr<Deposit>> vector_ref();
+	static Deposit get_deposit(const size_t index);
 };
 
 Deposit make_deposit(const std::string& title,
@@ -82,7 +93,7 @@ public:
 		Money planned,
 		Money real,
 		const TimeDate date_start,
-		const TimeDate dast_end_planned,
+		const TimeDate date_end_planned,
 		const TimeDate date_end_real);
 
 	ClientDeposit() = default;
@@ -100,6 +111,8 @@ public:
 
 	void finish_now();
 	bool is_finished();
+
+	static ClientDeposit make_from_deposit(const Deposit& deposit, Money investment, unsigned days);
 
 };
 

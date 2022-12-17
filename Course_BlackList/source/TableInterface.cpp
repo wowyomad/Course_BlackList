@@ -1,5 +1,4 @@
 #include "TableInterface.hpp"
-#include "UserInterface.h"
 
 #include <conio.h>
 #include <iomanip>
@@ -35,6 +34,10 @@ void OptionsInterface::update()
 		to_update = true;
 		last_event = events::back;
 		break;
+
+	case CONSTANT::TAB:
+		to_update = true;
+		last_event = events::other;
 	}
 }
 

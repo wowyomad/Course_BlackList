@@ -10,7 +10,6 @@
 #include "RNG.hpp"
 
 #include "FileHandle.hpp"
-#include "Account.h"
 
 std::vector<std::shared_ptr<Account>> Account::vector;
 size_t Account::MAX_VECTOR_SIZE;
@@ -32,9 +31,9 @@ std::string Account::Access_toString(Account::Access access)
 	}
 }
 
-std::string Account::Level_toString(Account::Level level)
+std::string Account::Level_toString(Level level)
 {
-	using Level = Account::Level;
+	using Level = Level;
 	switch (level)
 	{
 	case Level::Client:
@@ -46,8 +45,8 @@ std::string Account::Level_toString(Account::Level level)
 	}
 }
 
-Account::Account()
-	: id("none"), password(), access(), level() {}
+//Account::Account()
+//	: id("none"), password(), access(), level() {}
 
 Account::Account(const std::string& login,
 	const std::string& id,
@@ -71,7 +70,7 @@ std::fstream& operator<<(std::fstream& ofs, const Account& acc)
 	ofs << acc.login << ' ';
 	ofs << acc.password << ' ';
 	ofs.write((const char*)&acc.access, sizeof(Account::Access));
-	ofs.write((const char*)&acc.level, sizeof(Account::Level));
+	ofs.write((const char*)&acc.level, sizeof(Level));
 	//std::cout << ofs.tellp() << '\n';
 	return ofs;
 }
@@ -83,7 +82,7 @@ std::fstream& operator>>(std::fstream& ifs, Account& acc)
 	ifs >> acc.password;
 	ifs.get();
 	ifs.read((char*)&acc.access, sizeof(Account::Access));
-	ifs.read((char*)&acc.level, sizeof(Account::Level));
+	ifs.read((char*)&acc.level, sizeof(Level));
 	//std::cout << ifs.tellg() << '\n';
 	return ifs;
 }
@@ -118,7 +117,7 @@ void Account::print_topRow_index() const
 	std::cout << ConsoleFormat::RowString(row, BORDER::BOTTOM);
 }
 
-static void print_TopRow_index()
+void Account::print_TopRow_index()
 {
 	using namespace ConsoleFormat;
 	std::vector<std::string> row;
@@ -342,11 +341,13 @@ void Account::vector_push(const Account& acc)
 	if (Account::vector.size() == Account::BUFFER_SIZE)
 		Account::vector.reserve(vector.size() + Account::RESERVE_SIZE);
 
-	std::shared_ptr<Account> new_account = std::make_shared<Account>(acc);
+	const std::shared_ptr<Account> new_account = std::make_shared<Account>(acc);
+	Client new_client = make_from_account(new_account);
 	Account::vector.emplace_back(new_account);
+	Client::vector_push(new_client);
 }
 
-std::shared_ptr<Account> Account::GetAccount(const int index)
+std::shared_ptr<Account> Account::GetAccount(const size_t index)
 {
 	if (index > vector.size() - 1) throw "wtf index";
 	return vector[index];
@@ -358,6 +359,31 @@ std::shared_ptr<Account> Account::GetAccount(const std::string login)
 		if (it->login == login)
 			return it;
 	throw "wtf login not found";
+}
+size_t Account::GetUserIndex(std::string login)
+{
+	size_t i = 0;
+	for (const auto& it : vector)
+		if (it->login == login)
+			return i;
+		else i++;
+	throw "not found";
+}
+
+
+std::shared_ptr<Client> Account::GetClient()
+{
+	size_t index = GetUserIndex(login);
+	return Client::get_account(index);
+}
+
+
+void Account::RemoveAccount(const size_t index)
+{
+	if (index > vector.size()) throw "wtf index";
+	vector.erase(vector.begin() + index);
+	Client::RemoveUser(index);
+
 }
 
 void Account::RemoveUser(const size_t index)
@@ -387,7 +413,7 @@ FileStatus Account::GetFileStatus()
 	return FileStatus::Opened;
 }
 
-Account make_account(const std::string& login, const std::string& string_password, const Account::Access access, const Account::Level level)
+Account make_account(const std::string& login, const std::string& string_password, const Account::Access access, const Level level)
 {
 	Password password = make_password(string_password);
 	std::string id = Account::GenerateId();
@@ -396,16 +422,22 @@ Account make_account(const std::string& login, const std::string& string_passwor
 
 Account make_account_client(const std::string& login, const std::string& string_password)
 {
-	return make_account(login, string_password, Account::Access::Pendig, Account::Level::Client);
+	return make_account(login, string_password, Account::Access::Pendig, Level::Client);
 }
 
 Account make_account_client_approved(const std::string& login, const std::string& string_password)
 {
-	return make_account(login, string_password, Account::Access::Approved, Account::Level::Client);
+	return make_account(login, string_password, Account::Access::Approved, Level::Client);
 }
 
 Account make_account_admin(const std::string& login, const std::string& string_password)
 {
-	return make_account(login, string_password, Account::Access::Approved, Account::Level::Admin);
+	return make_account(login, string_password, Account::Access::Approved, Level::Admin);
 }
 
+Client make_from_account(const std::shared_ptr<Account>& acc)
+{
+	std::vector<std::shared_ptr<ClientDeposit>> deposits;
+
+	return Client(acc->get_login(), acc->get_id(), deposits);
+}

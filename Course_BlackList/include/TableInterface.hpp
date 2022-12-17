@@ -4,7 +4,9 @@
 
 #include "console_manip.h"
 #include "Printable.h"
-#include "UserInterface.h"
+#include "PrintFormat.h"
+
+#include "common.h"
 
 #include <vector>
 #include <memory>
@@ -39,6 +41,7 @@ namespace events
 	static const event none = 0x00000000;
 	static const event select = 0x00000001;
 	static const event back = 0x00000002;
+	static const event other = 0x00000003;
 }
 
 class OptionsInterface

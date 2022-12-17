@@ -29,7 +29,7 @@ public:
 
 	void add_deposit(const ClientDeposit& deposit);
 
-	const std::vector<std::shared_ptr<ClientDeposit>> deposit_ref() const;
+	const std::vector<std::shared_ptr<ClientDeposit>>& deposit_ref() const;
 
 	virtual void print_topRow_index() const override;
 	static void print_TopRow_index();
@@ -38,7 +38,7 @@ public:
 	virtual void print_row_highlight(const size_t& index) const override;
 	virtual void print_row_index_highlight(const size_t& index) const override;
 
-	static const std::vector<std::shared_ptr<Client>> vector_ref();
+	static const std::vector<std::shared_ptr<Client>>& vector_ref();
 	static void vector_push(const Client& acc);
 	static std::shared_ptr<Client> get_account(size_t index);
 	static std::shared_ptr<Client> get_account(std::string login);

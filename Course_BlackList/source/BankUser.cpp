@@ -46,7 +46,7 @@ void Client::add_deposit(const ClientDeposit& deposit)
 
 
 
-const std::vector<std::shared_ptr<ClientDeposit>> Client::deposit_ref() const
+const std::vector<std::shared_ptr<ClientDeposit>>& Client::deposit_ref() const
 {
 	return deposits;
 }
@@ -117,7 +117,7 @@ void Client::print_row_index_highlight(const size_t& index) const
 	ConsoleFormat::PrintRow_highlight(row, BORDER::RIGHT | BORDER::LEFT | BORDER::VERTICAL | BORDER::BOTTOM);
 }
 
-const std::vector<std::shared_ptr<Client>> Client::vector_ref()
+const std::vector<std::shared_ptr<Client>>& Client::vector_ref()
 {
 	return vector;
 }

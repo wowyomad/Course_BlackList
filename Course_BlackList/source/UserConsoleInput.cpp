@@ -139,7 +139,7 @@ std::string InputLogin(unsigned min, unsigned max)
 	return login;
 }
 
-std::string InputString(unsigned min, unsigned max, char* msg)
+std::string InputString(const char* msg)
 {
 	std::string string = "";
 	if (msg) std::cout << msg;

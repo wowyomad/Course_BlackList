@@ -87,6 +87,11 @@ std::fstream& operator>>(std::fstream& ifs, Account& acc)
 	return ifs;
 }
 
+bool Account::same_login(const std::string& login) const
+{
+	return this->login == login;
+}
+
 bool Account::UpdateLogin(const std::string& login)
 {
 	if (Account::login_is_uniqiue(login))

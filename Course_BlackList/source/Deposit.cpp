@@ -126,7 +126,7 @@ void Deposit::vector_push(const Deposit& deposit)
 	Deposit::vector.emplace_back(new_deposit);
 }
 
-const std::vector<std::shared_ptr<Deposit>> Deposit::vector_ref()
+const std::vector<std::shared_ptr<Deposit>>& Deposit::vector_ref()
 {
 	return vector;
 }
@@ -333,7 +333,7 @@ ClientDeposit make_client_deposit(std::string title, const Money invested, const
 
 	TimeDate null;
 
-	Money planned = invested * (365.0f / days) * int_rate;
+	Money planned = invested * (1 + (days / 365.0f) * int_rate);
 
 	std::string id = RNG::GenerateNum_str();
 

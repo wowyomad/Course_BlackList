@@ -1,10 +1,8 @@
 ﻿#include "common.h"
 #include <Windows.h>
 #include "Setup.hpp"
-
-#include "Account.h"
-
 #include "../ui.h"
+
 
 
 int CONSTANT::CONSOLE_WIDTH;
@@ -27,12 +25,7 @@ int main()
 	CONSTANT::CONSOLE_HEIGHT = Console().WindowSize().Y;
 	CONSTANT::ROW_WIDTH = CONSTANT::CONSOLE_WIDTH * .8;
 	CONSTANT::BOX_WIDTH = CONSTANT::CONSOLE_WIDTH * 0.5;
-	
-	Account acc = make_account("123", "123", Account::Access::Approved, Level::Admin);
-	Client cli = make_from_account(std::make_shared<Account>(acc));
 
-	Client::vector_push(cli);
-	Account::vector_push(acc);
 
 
 	UIW::MainScreen();

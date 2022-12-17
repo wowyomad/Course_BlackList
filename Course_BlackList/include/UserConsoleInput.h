@@ -15,7 +15,7 @@ bool is_english(const char ch);
 
 std::string InputPassword(unsigned min, unsigned max);
 std::string InputLogin(unsigned min, unsigned max);
-std::string InputString(unsigned min, unsigned max, char* msg);
+std::string InputString(const char* msg);
 tm InputDate(char* msg);
 tm InputDate(manip::pos begin = manip::pos(0,0));
 tm InputTime(char* msg);
@@ -27,7 +27,7 @@ bool AcceptAction(const char* msg);
 bool AcceptAction(std::string&& msg);
 
 template <typename _Type>
-void InputVar(_Type& var, unsigned min, unsigned max, const char msg[] = "Ввод: ")
+void InputVar(_Type& var, _Type min, _Type max, const char msg[] = "Ввод: ")
 {
 	while (true)
 	{

@@ -237,7 +237,7 @@ void UIW::Main_Super(std::shared_ptr<Account> account_ptr)
 		}
 	}
 
-	UI::WaitTillEnter();
+	ClearScreen();
 }
 void UIW::Main_Admin(std::shared_ptr<Account> account_ptr)
 {
@@ -489,6 +489,7 @@ void UIW::ClientOptions_Client(std::shared_ptr<Account> account_ptr)
 			}
 		}
 	}
+	ClearScreen();
 }
 
 void UIW::RemoveAcccount_Admin(std::shared_ptr<Account> account_ptr)
@@ -552,15 +553,20 @@ void UIW::NewDeposit_Admin(std::shared_ptr<Account> account_ptr)
 {
 	ClearScreen();
 
+	UI::PrintHeader("Добавление нового вклада");
+	std::cout << manip::pos(0, 6);
+
 	std::string title = InputString("Название вклада: ");
 	Money min, max;
 	InputVar(min, 0ll, 100'000'000'000, "Минимальный вклад: ");
-	InputVar(max, min * 10, min * 10000, "Максимальный вклад: ");
+	InputVar(max, min , 100'000'000'000'000, "Максимальный вклад: ");
 	float int_rate;
-	InputVar(int_rate, 0.1f, 25.0f, "Процентная ставка, %: ");
+	InputVar(int_rate, 0.1f, 100.0f, "Процентная ставка, %: ");
 	int_rate /= 100;
 	Deposit new_deposit = make_deposit(title, int_rate, min, max);
 
+	new_deposit.print_TopRow_index();
+	new_deposit.print_row_index(0);
 	UI::PrintMessage("Подтвердите добавление");
 	if (UI::UserAccept())
 	{
@@ -569,6 +575,8 @@ void UIW::NewDeposit_Admin(std::shared_ptr<Account> account_ptr)
 	}
 	else
 		UI::PrintMessage("Вклад был отменен");
+
+	ClearScreen();
 }
 
 

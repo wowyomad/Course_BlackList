@@ -1,10 +1,9 @@
 #pragma once
-#include "Account.h"
 
+
+#include "Account.h"
 #include <string>
 
-class Account;
-class Client;
 
 
 namespace UIW

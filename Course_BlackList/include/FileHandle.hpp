@@ -45,7 +45,7 @@ public:
 	template <class T>
 	static bool ReadFile(const char* path, std::vector<std::shared_ptr<T>>& vector)
 	{
-		std::fstream file(path, std::ios::in);
+		std::fstream file(path, std::ios::in | std::ios::binary);
 		bool state = ReadFileToVector(file, vector);
 		file.close();
 		return state;
@@ -64,7 +64,7 @@ public:
 	template<class T>
 	static int GetFileStatus(const char* path, std::vector<T>& vector)
 	{
-		std::fstream file(path, std::ios::in);
+		std::fstream file(path, std::ios::in | std::ios::binary);
 		if (file.is_open())
 		{
 			int state;

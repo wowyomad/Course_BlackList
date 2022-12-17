@@ -45,7 +45,7 @@ public:
 		const Money max);
 
 	Deposit() = default;
-	Deposit(const Deposit& other) = default;
+	Deposit(const Deposit& other);
 	Deposit(Deposit&& other) = default;
 
 	Deposit operator=(const Deposit& other);

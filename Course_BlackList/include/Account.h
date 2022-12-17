@@ -75,6 +75,7 @@ public:
 
 	void set_id(const std::string& id) { this->id = id; }
 	void set_login(const std::string& login) { this->login = login; }
+	bool same_login(const std::string& login) const;
 
 	bool UpdateLogin(const std::string& login);
 	void UpdatePassword(const std::string& password_string);

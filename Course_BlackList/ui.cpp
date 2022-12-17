@@ -14,6 +14,7 @@ class Account;
 class Client;
 
 
+
 void UIW::HelloScreen()
 {
 	ClearScreen();
@@ -145,6 +146,7 @@ void UIW::Login()
 			throw std::exception();
 		}
 		UI::WaitTillEnter();
+		this_login = account.get_login();
 		Main(std::make_shared<Account>(account));
 	}
 	ClearScreen();
@@ -225,7 +227,7 @@ void UIW::Main_Super(std::shared_ptr<Account> account_ptr)
 				UIW::UserTable_Admin(account_ptr);
 				break;
 			case 1:
-				UI::PrintMessage("Это еще не работает");
+				UIW::DepositTable_Admin(account_ptr);
 				break;
 			}
 		}
@@ -235,7 +237,7 @@ void UIW::Main_Super(std::shared_ptr<Account> account_ptr)
 		}
 	}
 
-	UI::WaitTillEnter();
+	ClearScreen();
 }
 void UIW::Main_Admin(std::shared_ptr<Account> account_ptr)
 {
@@ -349,7 +351,7 @@ void UIW::DepositTable_Admin(std::shared_ptr<Account> account_ptr)
 	ClearScreen();
 
 	std::string header = "Доступные вклады";
-	auto deposits = Deposit::vector_ref();
+	const std::vector<std::shared_ptr<Deposit>>& deposits = Deposit::vector_ref();
 
 	TableInterface<Deposit> ti(deposits, header, { 0, 0 }, 10);
 
@@ -365,7 +367,33 @@ void UIW::DepositTable_Admin(std::shared_ptr<Account> account_ptr)
 		}
 	}
 
+	ClearScreen();
+}
 
+void UIW::DepositTable_Client(std::shared_ptr<Account> account_ptr)
+{
+	ClearScreen();
+
+	std::string header = "Доступные вклады";
+	auto deposits = Deposit::vector_ref();
+
+	TableInterface<Deposit> ti(deposits, header, { 0, 0 }, 10);
+
+	while (ti.event() != events::back)
+	{
+		ti.render();
+		ti.update();
+
+		if (ti.event() == events::select)
+		{
+			size_t index = ti.index();
+			std::shared_ptr<Deposit> deposit = std::make_shared<Deposit>(Deposit::get_deposit(index));
+			UIW::AddDeposit_Client(account_ptr, deposit);
+			ti.refresh();
+		}
+	}
+
+	ClearScreen();
 }
 
 
@@ -376,14 +404,20 @@ void UIW::ClientDeposits_Client(std::shared_ptr<Account> account_ptr)
 	std::string header = "Мои ввклады"; //message
 
 
-	std::vector<std::shared_ptr<ClientDeposit>> deposits = account_ptr->GetClient()->deposit_ref();
 
-	TableInterface<ClientDeposit> ti(deposits, header, { 0, 0 }, 10);
+	TableInterface<ClientDeposit> ti(account_ptr->GetClient()->deposit_ref(), header, { 0, 0 }, 10);
 
 	while (ti.event() != events::back)
 	{
 		ti.render();
 		ti.update();
+
+		if (ti.event() == events::other)
+		{
+			UIW::DepositTable_Client(account_ptr);
+			std::cout << account_ptr->GetClient()->deposits.size();
+			ti.refresh();
+		}
 	}
 
 	ClearScreen();
@@ -455,6 +489,7 @@ void UIW::ClientOptions_Client(std::shared_ptr<Account> account_ptr)
 			}
 		}
 	}
+	ClearScreen();
 }
 
 void UIW::RemoveAcccount_Admin(std::shared_ptr<Account> account_ptr)
@@ -468,12 +503,79 @@ void UIW::RemoveAccount_Super(std::shared_ptr<Account> account_ptr)
 
 
 
-void UIW::AddDeposit_Client(std::shared_ptr<Account> account_ptr)
+void UIW::AddDeposit_Client(std::shared_ptr<Account> account_ptr, std::shared_ptr<Deposit> deposit)
 {
+	ClearScreen();
+
+	std::string header = "Создание нового вклада";
+
+	std::vector<std::string> available;
+	for (size_t i = 30; i <= 360; i += 30)
+	{
+		available.push_back(std::to_string(i) + " дней");
+	}
+
+	OptionsInterface oi(available, header, { 0, 6 });
+	while (oi.event() != events::select)
+	{
+		oi.render();
+		oi.update();
+	}
+
+	unsigned days = (oi.position() + 1) * 30;
+
+	Money min = deposit->deposit_min;
+	Money max = deposit->deposit_max;
+
+	Money invest;
+	InputVar<Money>(invest, min, max, "Сумма: ");
+	tm current_time = TimeDate::current_time_tm();
+	TimeDate date_now(&current_time);
+	ClientDeposit new_deposit = make_client_deposit(deposit->title, invest, deposit->int_rate, date_now, days);
+
+
+
+	ClearScreen();
+	new_deposit.print_topRow_index();
+	new_deposit.print_row_index(0);
+	UI::PrintMessage("Подтвердите добавление");
+	if (UI::UserAccept())
+	{
+		account_ptr->GetClient()->add_deposit(new_deposit);
+		UI::PrintMessage("Вклад был успешно сделан");
+	}
+	else
+		UI::PrintMessage("Вклад был отменен");
+
 	ClearScreen();
 }
 void UIW::NewDeposit_Admin(std::shared_ptr<Account> account_ptr)
 {
+	ClearScreen();
+
+	UI::PrintHeader("Добавление нового вклада");
+	std::cout << manip::pos(0, 6);
+
+	std::string title = InputString("Название вклада: ");
+	Money min, max;
+	InputVar(min, 0ll, 100'000'000'000, "Минимальный вклад: ");
+	InputVar(max, min , 100'000'000'000'000, "Максимальный вклад: ");
+	float int_rate;
+	InputVar(int_rate, 0.1f, 100.0f, "Процентная ставка, %: ");
+	int_rate /= 100;
+	Deposit new_deposit = make_deposit(title, int_rate, min, max);
+
+	new_deposit.print_TopRow_index();
+	new_deposit.print_row_index(0);
+	UI::PrintMessage("Подтвердите добавление");
+	if (UI::UserAccept())
+	{
+		Deposit::vector_push(new_deposit);
+		UI::PrintMessage("Вклад был успешно сделан");
+	}
+	else
+		UI::PrintMessage("Вклад был отменен");
+
 	ClearScreen();
 }
 

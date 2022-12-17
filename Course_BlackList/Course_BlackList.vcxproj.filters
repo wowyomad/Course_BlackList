@@ -27,9 +27,6 @@
     <ClInclude Include="include\Setup.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Account.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\RNG.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -54,9 +51,6 @@
     <ClInclude Include="include\Password.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\TableInterface.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\Printable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -65,6 +59,12 @@
     </ClInclude>
     <ClInclude Include="ui.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TableInterface.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Account.h">
+      <Filter>Header Files\Resource Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -95,10 +95,10 @@
     <ClCompile Include="source\Password.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\TableInterface.cpp">
+    <ClCompile Include="ui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ui.cpp">
+    <ClCompile Include="source\TableInterface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

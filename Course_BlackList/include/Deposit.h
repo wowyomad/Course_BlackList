@@ -45,7 +45,7 @@ public:
 		const Money max);
 
 	Deposit() = default;
-	Deposit(const Deposit& other) = default;
+	Deposit(const Deposit& other);
 	Deposit(Deposit&& other) = default;
 
 	Deposit operator=(const Deposit& other);
@@ -59,7 +59,7 @@ public:
 	friend std::fstream& operator>>(std::fstream& fs,  Deposit& deposit);
 
 	static void vector_push(const Deposit& deposit);
-	static const std::vector<std::shared_ptr<Deposit>> vector_ref();
+	static const std::vector<std::shared_ptr<Deposit>>& vector_ref();
 	static Deposit get_deposit(const size_t index);
 };
 

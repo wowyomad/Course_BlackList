@@ -126,6 +126,10 @@ public:
 		case CONSTANT::ESCAPE:
 			last_event = events::back;
 			break;
+
+		case CONSTANT::TAB:
+			last_event = events::other;
+			break;
 		}
 	}
 	void render()
@@ -146,20 +150,24 @@ public:
 		else std::cout << manip::pos(0, 0);
 
 
-
-		if (size > (page + 1) * rows)
-			max_pos = (page + 1) * rows - 1;
-		else
-			max_pos = (page * rows) + size % 10 - 1;
-
 		_ItemType::print_TopRow_index();
 
-		for (size_t i = page * rows; i <= max_pos; i++)
+		if (size <= 0) UI::PrintMessage("Данных нету");
+		else
 		{
-			if (i == pos)
-				items[i].second->print_row_index_highlight(i + 1);
+			if (size > (page + 1) * rows)
+				max_pos = (page + 1) * rows - 1;
 			else
-				items[i].second->print_row_index(i + 1);
+				max_pos = (page * rows) + size % 10 - 1;
+
+
+			for (size_t i = page * rows; i <= max_pos; i++)
+			{
+				if (i == pos)
+					items[i].second->print_row_index_highlight(i + 1);
+				else
+					items[i].second->print_row_index(i + 1);
+			}
 		}
 		std::cout << manip::pos(0, CONSTANT::CONSOLE_HEIGHT - 4);
 		PrintPageCount();

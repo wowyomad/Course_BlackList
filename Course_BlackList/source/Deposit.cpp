@@ -61,7 +61,7 @@ void Deposit::print_row_index(const size_t& index) const
 	std::vector<std::string> row{
 		title,
 		id,
-		(std::stringstream() << std::fixed << std::setprecision(2) << int_rate).str(),
+		(std::stringstream() << std::fixed << std::setprecision(2) << int_rate * 100).str(),
 		(std::stringstream() << std::fixed << std::setprecision(2) << deposit_min).str(),
 		(std::stringstream() << std::fixed << std::setprecision(2) << deposit_max).str()
 	};
@@ -81,7 +81,7 @@ void Deposit::print_row_index_highlight(const size_t& index) const
 	std::vector<std::string> row{
 		title,
 		id,
-		(std::stringstream() << std::fixed << std::setprecision(2) << int_rate).str(),
+		(std::stringstream() << std::fixed << std::setprecision(2) << int_rate * 100).str(),
 		(std::stringstream() << std::fixed << std::setprecision(2) << deposit_min).str(),
 		(std::stringstream() << std::fixed << std::setprecision(2) << deposit_max).str()
 	};
@@ -96,15 +96,27 @@ Deposit::Deposit(const std::string& title, const std::string& id, const float in
 
 }
 
+Deposit::Deposit(const Deposit& other)
+	:title(other.title), id(other.id), int_rate(other.int_rate), deposit_min(other.deposit_min), deposit_max(other.deposit_max)
+{
+
+}
+
 
 Deposit Deposit::operator=(const Deposit& other)
 {
-	return Deposit(other);
+	id = other.id;
+	title = other.title;;
+	int_rate = other.int_rate;
+	deposit_min = other.deposit_min;
+	deposit_max = other.deposit_max;
+	return *this;
 }
 
 Deposit Deposit::operator=(Deposit&& other)
 {
-	return Deposit(other);
+	*this = other;
+	return *this;
 }
 
 bool Deposit::operator==(const Deposit& other)
@@ -126,7 +138,7 @@ void Deposit::vector_push(const Deposit& deposit)
 	Deposit::vector.emplace_back(new_deposit);
 }
 
-const std::vector<std::shared_ptr<Deposit>> Deposit::vector_ref()
+const std::vector<std::shared_ptr<Deposit>>& Deposit::vector_ref()
 {
 	return vector;
 }
@@ -138,8 +150,8 @@ Deposit Deposit::get_deposit(const size_t index)
 
 std::fstream& operator<<(std::fstream& fs, const Deposit& deposit)
 {
-	fs << deposit.title << ' ';
-	fs << deposit.id << ' ';
+	fs << deposit.title << '#';
+	fs << deposit.id << '#';
 	fs.write((char*)&deposit.int_rate, sizeof(float));
 	fs.write((char*)&deposit.deposit_min, sizeof(Money));
 	fs.write((char*)&deposit.deposit_max, sizeof(Money));
@@ -149,9 +161,8 @@ std::fstream& operator<<(std::fstream& fs, const Deposit& deposit)
 
 std::fstream& operator>>(std::fstream& fs,  Deposit& deposit)
 {
-	fs >> deposit.title;
-	fs >> deposit.id;
-	fs.get();
+	std::getline(fs, deposit.title, '#');
+	std::getline(fs, deposit.id, '#');	
 	fs.read((char*)&deposit.int_rate, sizeof(float));
 	fs.read((char*)&deposit.deposit_min, sizeof(Money));
 	fs.read((char*)&deposit.deposit_max, sizeof(Money));
@@ -228,7 +239,7 @@ void ClientDeposit::print_row_index(const size_t& index) const
 	std::vector<std::string> row {
 		std::to_string(index),
 		title,
-		(std::stringstream() << std::fixed << std::setprecision(2) << int_rate).str(),
+		(std::stringstream() << std::fixed << std::setprecision(2) << int_rate * 100).str(),
 		(std::stringstream() << std::fixed << std::setprecision(2) << invested).str(),
 		(std::stringstream() << std::fixed << std::setprecision(2) << planned).str(),
 		date_start.str_date(),
@@ -250,7 +261,7 @@ void ClientDeposit::print_row_index_highlight(const size_t& index) const
 	std::vector<std::string> row{
 		std::to_string(index),
 		title,
-		(std::stringstream() << std::fixed << std::setprecision(2) << int_rate).str(),
+		(std::stringstream() << std::fixed << std::setprecision(2) << int_rate * 100).str(),
 		(std::stringstream() << std::fixed << std::setprecision(2) << invested).str(),
 		(std::stringstream() << std::fixed << std::setprecision(2) << planned).str(),
 		date_start.str_date(),
@@ -292,13 +303,14 @@ ClientDeposit ClientDeposit::make_from_deposit(const Deposit& deposit, Money inv
 Deposit make_deposit(const std::string& title, const float int_rate, const Money min, const Money max)
 {
 	std::string id = RNG::GenerateNum_str();
-	return Deposit(title, id, int_rate, min, max);
+	Deposit deposit (title, id, int_rate, min, max);
+	return deposit;
 }
 
 std::fstream& operator<<(std::fstream& fs, const ClientDeposit& deposit)
 {
-	fs << deposit.id << ' ';
-	fs << deposit.title << ' ';
+	fs << deposit.title << '#';
+	fs << deposit.id << '#';
 	fs.write((char*)&deposit.date_start, sizeof(TimeDate));
 	fs.write((char*)&deposit.date_end_planned, sizeof(TimeDate));
 	fs.write((char*)&deposit.date_end_real, sizeof(TimeDate));
@@ -312,9 +324,8 @@ std::fstream& operator<<(std::fstream& fs, const ClientDeposit& deposit)
 
 std::fstream& operator>>(std::fstream& fs, ClientDeposit& deposit)
 {
-	fs >> deposit.id;
-	fs >> deposit.title;
-	fs.get();
+	std::getline(fs, deposit.title, '#');
+	std::getline(fs, deposit.id, '#');
 	fs.read((char*)&deposit.date_start, sizeof(TimeDate));
 	fs.read((char*)&deposit.date_end_planned, sizeof(TimeDate));
 	fs.read((char*)&deposit.date_end_real, sizeof(TimeDate));
@@ -333,7 +344,7 @@ ClientDeposit make_client_deposit(std::string title, const Money invested, const
 
 	TimeDate null;
 
-	Money planned = invested * (365.0f / days) * int_rate;
+	Money planned = invested * (1 + (days / 365.0f) * int_rate);
 
 	std::string id = RNG::GenerateNum_str();
 

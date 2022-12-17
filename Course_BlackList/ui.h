@@ -1,12 +1,15 @@
 #pragma once
-#include "Account.h"
 
-class Account;
-class Client;
+
+#include "Account.h"
+#include <string>
+
 
 
 namespace UIW
 {
+	static std::string this_login;
+
 	void HelloScreen();
 
 	void MainScreen();
@@ -23,6 +26,8 @@ namespace UIW
 	void UserTable_Super(std::shared_ptr<Account> account_ptr);
 
 	void DepositTable_Admin(std::shared_ptr<Account> account_ptr);
+	void DepositTable_Client(std::shared_ptr<Account> account_ptr);
+
 
 	void ClientDeposits_Client(std::shared_ptr<Account> account_ptr);
 	void ClientDeposits_Admin(std::shared_ptr<Account> account_ptr);
@@ -33,7 +38,7 @@ namespace UIW
 	void RemoveAcccount_Admin(std::shared_ptr<Account> account_ptr);
 	void RemoveAccount_Super(std::shared_ptr<Account> account_ptr);
 
-	void AddDeposit_Client(std::shared_ptr<Account> account_ptr);
+	void AddDeposit_Client(std::shared_ptr<Account> account_ptr, std::shared_ptr<Deposit> deposit);
 	void NewDeposit_Admin(std::shared_ptr<Account> account_ptr);
 
 
